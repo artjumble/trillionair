@@ -5,6 +5,7 @@ import { dec } from './format.js';
 import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
 import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier } from './upgrades.js';
 import { achievementMultiplier, checkAchievements } from './achievements.js';
+import { potentialPrestige, prestigeMultiplier } from './prestige.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -20,6 +21,7 @@ export const state = {
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
   achievements: {}, // achievement id -> true once earned
+  prestige: 0, // "Old Money" — banked inherited advantage; each gives +10% income forever
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -59,7 +61,28 @@ export function recomputeIncome() {
   }
   state.incomePerSec = total
     .mul(globalMultiplier(state.upgrades))
-    .mul(achievementMultiplier(state.achievements));
+    .mul(achievementMultiplier(state.achievements))
+    .mul(prestigeMultiplier(state.prestige));
+}
+
+/** Old Money you'd bank by cashing out right now (above what you already hold). */
+export function prestigeGain() {
+  return Math.max(0, potentialPrestige(state.earnedTotal) - state.prestige);
+}
+
+/**
+ * Cash out / "go public": bank the prestige gain and wipe this run's money, generators,
+ * and upgrades — but keep Old Money (and achievements, play time). Returns Old Money gained.
+ */
+export function doPrestige() {
+  const gain = prestigeGain();
+  if (gain <= 0) return 0;
+  state.prestige += gain;
+  state.money = new Decimal(0);
+  for (const g of generators) state.owned[g.id] = 0;
+  state.upgrades = {};
+  recomputeAll();
+  return gain;
 }
 
 /** Snapshot of values the achievement checks read. */
@@ -142,6 +165,7 @@ export function save() {
     owned: state.owned,
     upgrades: state.upgrades,
     achievements: state.achievements,
+    prestige: state.prestige,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -185,6 +209,7 @@ export function load() {
     }
     state.upgrades = data.upgrades ?? {};
     state.achievements = data.achievements ?? {};
+    state.prestige = data.prestige ?? 0;
     recomputeAll();
     return true;
   } catch (err) {

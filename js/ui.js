@@ -1,9 +1,10 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
+import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -21,6 +22,8 @@ const achEls = {};
 
 // Current buy amount applied to all generators: 1, 10, or 'max'.
 let buyMode = 1;
+// Prestige reset requires a confirming second click (destructive).
+let prestigeArmed = false;
 
 /** Spawn a floating "+$" near the pointer for click feedback (first bit of juice). */
 function floatGain(amount, x, y) {
@@ -45,9 +48,26 @@ export function bindUI() {
     render();
   });
   bindBuyModes();
+  bindPrestige();
   buildGenerators();
   buildUpgrades();
   buildAchievements();
+}
+
+/** Wire the cash-out / go-public button with a two-click confirm (it wipes the run). */
+function bindPrestige() {
+  el('prestige-btn').addEventListener('click', () => {
+    if (prestigeGain() <= 0) return;
+    if (!prestigeArmed) {
+      prestigeArmed = true;
+      render();
+      setTimeout(() => { prestigeArmed = false; render(); }, 3500);
+      return;
+    }
+    prestigeArmed = false;
+    doPrestige();
+    render();
+  });
 }
 
 /** Build a badge per achievement up front; render() flips earned styling. */
@@ -251,4 +271,35 @@ export function render() {
     if (badge) badge.classList.toggle('is-locked', !earned);
   }
   el('ach-count').textContent = `${earnedCount}/${achievements.length}`;
+
+  renderPrestige();
+}
+
+/** The inheritance panel: held Old Money, its bonus, and the cash-out preview. */
+function renderPrestige() {
+  const have = state.prestige;
+  el('prestige-have').textContent = have > 0
+    ? `${have} Old Money · +${Math.round(PRESTIGE_BONUS * 100 * have)}% income`
+    : '';
+
+  const gain = prestigeGain();
+  const btn = el('prestige-btn');
+  if (gain > 0) {
+    el('prestige-sub').textContent =
+      'Cash out and hand it to your heirs. You lose the money, the businesses, and the shortcuts — ' +
+      'but the next generation starts with a permanent head start it did nothing to earn.';
+    btn.disabled = false;
+    btn.classList.toggle('is-armed', prestigeArmed);
+    btn.textContent = prestigeArmed
+      ? `Really? This wipes everything. Confirm to bank +${gain} Old Money`
+      : `Go Public — bank +${gain} Old Money`;
+  } else {
+    // Lifetime earnings needed for the next Old Money.
+    const target = earningsForPrestige(have + 1);
+    el('prestige-sub').textContent =
+      `Your dynasty isn't ready. Earn ${money(target)} in your lifetime to inherit your next Old Money.`;
+    btn.disabled = true;
+    btn.classList.remove('is-armed');
+    btn.textContent = have > 0 ? 'Nothing to cash out yet' : 'Build a fortune first';
+  }
 }

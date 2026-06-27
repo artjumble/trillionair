@@ -154,6 +154,33 @@ body {
 }
 .honest__note strong { color: var(--danger); }
 
+/* Prestige / inheritance */
+.prestige-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: linear-gradient(180deg, rgba(255, 216, 77, 0.08), rgba(255, 216, 77, 0.02));
+  border: 1px solid rgba(255, 216, 77, 0.35);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+}
+.prestige-have { font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+.prestige-btn {
+  align-self: flex-start;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.7rem 1.3rem;
+  background: linear-gradient(180deg, var(--accent), #e6b800);
+  color: #1a1300;
+  font-weight: 800;
+  transition: transform 0.06s ease, background 0.15s ease, opacity 0.15s ease;
+}
+.prestige-btn:active { transform: scale(0.97); }
+.prestige-btn.is-armed { background: linear-gradient(180deg, #ff8a8a, var(--danger)); color: #2a0000; }
+.prestige-btn:disabled { cursor: not-allowed; opacity: 0.4; background: rgba(255, 255, 255, 0.12); color: var(--ink-dim); }
+
 /* Generators */
 .generators-panel { display: flex; flex-direction: column; gap: 0.25rem; }
 .section-title { margin: 0; font-size: 1.25rem; }
