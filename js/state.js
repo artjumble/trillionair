@@ -14,11 +14,18 @@ const SAVE_KEY = 'trillionaire_save_v1';
 /** The whole point: one trillion dollars. */
 export const GOAL = new Decimal('1e12');
 
+// Wages: workers produce gross output; you pay them a share and keep the rest.
+// The DEFAULT share is the baseline, so income is unchanged until you start cutting wages.
+export const DEFAULT_WAGE_RATE = 0.3;
+
 export const state = {
   money: new Decimal(0),
   earnedTotal: new Decimal(0), // lifetime earnings (drives future prestige math)
   clickValue: new Decimal(1),
-  incomePerSec: new Decimal(0), // recomputed from generators
+  incomePerSec: new Decimal(0), // net income you keep (gross − wages)
+  grossPerSec: new Decimal(0), // total worker output before wages
+  wagesPerSec: new Decimal(0), // what your workers are paid (the line you'll try to suppress)
+  wageRate: DEFAULT_WAGE_RATE, // share of gross paid to workers; cut-wages upgrades lower it
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
   achievements: {}, // achievement id -> true once earned
@@ -63,11 +70,17 @@ export function recomputeIncome() {
       );
     }
   }
-  state.incomePerSec = total
+  const production = total
     .mul(globalMultiplier(state.upgrades))
     .mul(achievementMultiplier(state.achievements))
     .mul(prestigeMultiplier(state.prestige))
     .mul(metaIncomeMult(state.meta, state.prestige));
+
+  // Workers produce a fixed gross (their labor doesn't change when you cut their pay).
+  // You pay wageRate of it and keep the rest. At the default rate, net == production (no nerf).
+  state.grossPerSec = production.div(1 - DEFAULT_WAGE_RATE);
+  state.wagesPerSec = state.grossPerSec.mul(state.wageRate);
+  state.incomePerSec = state.grossPerSec.sub(state.wagesPerSec);
 }
 
 /** Old Money you'd bank by cashing out now (based on total ever earned, so spending it can't be re-farmed). */
@@ -197,6 +210,7 @@ export function save() {
     prestigeEarned: state.prestigeEarned,
     meta: state.meta,
     generation: state.generation,
+    wageRate: state.wageRate,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -245,6 +259,7 @@ export function load() {
     state.prestigeEarned = data.prestigeEarned ?? state.prestige;
     state.meta = data.meta ?? {};
     state.generation = data.generation ?? 1;
+    state.wageRate = data.wageRate ?? DEFAULT_WAGE_RATE;
     recomputeAll();
     return true;
   } catch (err) {

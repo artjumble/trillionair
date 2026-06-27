@@ -246,6 +246,17 @@ export function render() {
   el('money').textContent = money(state.money);
   el('income-rate').textContent = money(state.incomePerSec) + ' / sec';
 
+  // Wage breakdown: workers produce the gross, you pay them, you keep the difference.
+  if (state.grossPerSec.gt(0)) {
+    const pctKept = Math.round((1 - state.wageRate) * 100);
+    el('wage-breakdown').innerHTML =
+      `workers produce <span class="wage-gross">${money(state.grossPerSec)}/s</span> · ` +
+      `you pay <span class="wage-wages">−${money(state.wagesPerSec)}/s</span> in wages · ` +
+      `<span class="wage-keep">you keep ${pctKept}%</span>`;
+  } else {
+    el('wage-breakdown').textContent = '';
+  }
+
   const pct = goalProgress() * 100;
   el('goal-fill').style.width = pct.toFixed(6) + '%';
   el('goal-label').textContent = `${money(state.money)} of ${money(GOAL)}`;

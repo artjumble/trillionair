@@ -67,6 +67,10 @@ body {
 }
 
 .income-rate { color: var(--ink-dim); margin-top: -0.75rem; }
+.wage-breakdown { font-size: 0.78rem; color: var(--ink-dim); margin-top: -0.5rem; text-align: center; }
+.wage-gross { color: var(--ink); }
+.wage-wages { color: var(--danger); }
+.wage-keep { color: var(--money); }
 
 .click-btn {
   appearance: none;

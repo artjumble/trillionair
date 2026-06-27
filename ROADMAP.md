@@ -38,7 +38,7 @@
 - [x] "New generation starts ahead" framing + copy; resets feel like inheritance/IPO, not punishment
 
 ## Phase 4 — Satire systems
-- [ ] Wages model: income = worker output − wages; show the wages line explicitly
+- [x] Wages model: income = worker output − wages; show the wages line explicitly
 - [ ] "Cut wages / offshore / bust the union" upgrade branch that raises margins
 - [ ] Worker-begging beat surfaced late (a sprite/line asking you to stop)
 - [ ] Comparison ticker across magnitude boundaries (nurses, teachers, world hunger, etc. — verify figures)
