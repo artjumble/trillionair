@@ -6,13 +6,21 @@ import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
 import { metaUpgrades } from './metaupgrades.js';
+import { COMPARISONS } from './comparisons.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
 
-// Average U.S. public school teacher salary (~$69K, NEA 2023-24). Shown transparently
-// so the comparison is an honest translation of the pile, not a hidden claim.
-const TEACHER_SALARY = 69000;
+// Rotating comparison ticker: which affordable equivalent is currently shown.
+let comparisonIndex = -1;
+
+/** Advance to the next comparison you can currently afford (cycles only through affordable ones). */
+function advanceComparison() {
+  const affordable = COMPARISONS.map((_, i) => i).filter((i) => state.money.gte(COMPARISONS[i].perUnit));
+  if (affordable.length === 0) { comparisonIndex = -1; return; }
+  const pos = affordable.indexOf(comparisonIndex);
+  comparisonIndex = affordable[(pos + 1) % affordable.length];
+}
 
 // Worker pleas: surface once you start cutting wages, escalating as the rate drops.
 // Ordered mild -> severe; the most severe whose threshold the rate is under is shown.
@@ -71,6 +79,8 @@ export function bindUI() {
   });
   bindBuyModes();
   bindPrestige();
+  advanceComparison();
+  setInterval(advanceComparison, 4500); // rotate the comparison ticker
   buildMeta();
   buildGenerators();
   buildUpgrades();
@@ -286,14 +296,13 @@ export function render() {
   // The honest-labor counter: $1 for every second played. It crawls while your wealth booms.
   el('honest-earned').textContent = money(Math.floor(state.playSeconds));
 
-  // Comparison annotation: translate the abstract pile into people you could pay.
-  const perTeacher = dec(TEACHER_SALARY);
-  if (state.money.lt(perTeacher)) {
-    el('comparison').textContent = "…not yet one teacher's annual salary (~$69K).";
+  // Comparison ticker: translate the abstract pile into a rotating real-world equivalent.
+  if (comparisonIndex < 0) {
+    el('comparison').textContent = '…not yet enough to register on any human scale.';
   } else {
-    const teachers = state.money.div(perTeacher).floor();
-    const label = teachers.eq(1) ? '1 teacher' : `${format(teachers)} teachers`;
-    el('comparison').textContent = `≈ paying ${label} for a year (~$69K each)`;
+    const c = COMPARISONS[comparisonIndex];
+    const count = format(state.money.div(c.perUnit).floor());
+    el('comparison').textContent = c.render(count);
   }
 
   for (const g of generators) {
