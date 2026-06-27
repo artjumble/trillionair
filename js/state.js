@@ -35,6 +35,7 @@ export const state = {
   prestigeEarned: 0, // total Old Money ever earned (governs gain; spending doesn't refund it)
   meta: {}, // meta-upgrade id -> true; permanent, survives resets
   generation: 1, // which "generation" of the dynasty — increments on every cash-out
+  muted: false, // sound on/off (persisted)
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -222,6 +223,7 @@ export function save() {
     meta: state.meta,
     generation: state.generation,
     wageRate: state.wageRate,
+    muted: state.muted,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -272,6 +274,7 @@ export function load() {
     state.meta = data.meta ?? {};
     state.generation = data.generation ?? 1;
     state.wageRate = data.wageRate ?? DEFAULT_WAGE_RATE;
+    state.muted = data.muted ?? false;
     recomputeAll();
     return true;
   } catch (err) {

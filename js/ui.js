@@ -7,6 +7,7 @@ import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
 import { metaUpgrades } from './metaupgrades.js';
 import { COMPARISONS } from './comparisons.js';
+import { setMuted, playClick, playBuy } from './sound.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -108,12 +109,15 @@ export function bindUI() {
     addMoney(state.clickValue);
     floatGain(state.clickValue, e.clientX, e.clientY);
     coinBurst(e.clientX, e.clientY);
+    playClick(state.money.gt(0) ? Math.floor(state.money.log10()) : 0);
     // Springy squash-stretch on the button.
     btn.classList.remove('pop');
     void btn.offsetWidth;
     btn.classList.add('pop');
     render();
   });
+  setMuted(state.muted);
+  bindMute();
   bindBuyModes();
   bindPrestige();
   advanceComparison();
@@ -122,6 +126,18 @@ export function bindUI() {
   buildGenerators();
   buildUpgrades();
   buildAchievements();
+}
+
+/** Wire the mute toggle; reflect state in the icon. */
+function bindMute() {
+  const btn = el('mute-btn');
+  const sync = () => { btn.textContent = state.muted ? '🔇' : '🔊'; };
+  sync();
+  btn.addEventListener('click', () => {
+    state.muted = !state.muted;
+    setMuted(state.muted);
+    sync();
+  });
 }
 
 /** Wire the cash-out / go-public button with a two-click confirm (it wipes the run). */
@@ -174,7 +190,7 @@ function buildMeta() {
     container.appendChild(card);
     const btn = card.querySelector('.meta__buy');
     btn.addEventListener('click', () => {
-      if (buyMeta(u.id)) render();
+      if (buyMeta(u.id)) { playBuy(); render(); }
     });
     metaEls[u.id] = { card, btn };
   }
@@ -265,7 +281,7 @@ function buildUpgrades() {
     container.appendChild(card);
     const btn = card.querySelector('.upgrade__buy');
     btn.addEventListener('click', () => {
-      if (buyUpgrade(u.id)) render();
+      if (buyUpgrade(u.id)) { playBuy(); render(); }
     });
     upgradeEls[u.id] = { card, btn };
   }
@@ -310,7 +326,7 @@ function buildGenerators() {
     container.appendChild(row);
     const btn = row.querySelector('.gen__buy');
     btn.addEventListener('click', () => {
-      if (buyGenerator(g.id, buyMode)) render();
+      if (buyGenerator(g.id, buyMode)) { playBuy(); render(); }
     });
     genEls[g.id] = {
       owned: row.querySelector('.gen__owned'),

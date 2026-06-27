@@ -33,7 +33,21 @@ body {
   gap: 1.5rem;
 }
 
-.topbar { text-align: center; }
+.topbar { text-align: center; position: relative; }
+.mute-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.mute-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
 .logo {
   margin: 0;
