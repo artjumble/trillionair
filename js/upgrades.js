@@ -49,6 +49,26 @@ export const upgrades = [
   { id: 'glob_bailout', type: 'global', mult: 3, cost: 10000000000000,
     name: 'Privatize Gains, Socialize Losses', flavor: '×3 all income. What could possibly go wrong?',
     req: { money: 5000000000000 } },
+
+  // --- Wage cuts: lower the share paid to workers. Your cut goes up; their line shrinks. ---
+  { id: 'wage_review', type: 'wagecut', cut: 0.05, cost: 500000,
+    name: 'Performance Review (Everyone Fails)', flavor: 'A rigorous, fair process. Wages −5%.',
+    req: { money: 250000 } },
+  { id: 'offshore', type: 'wagecut', cut: 0.05, cost: 10000000,
+    name: 'Offshore the Whole Department', flavor: 'Same work, a tenth of the pay. Wages −5%.',
+    req: { money: 5000000 } },
+  { id: 'gig', type: 'wagecut', cut: 0.05, cost: 500000000,
+    name: "Reclassify Them as 'Contractors'", flavor: 'No benefits, no overtime, no problem. Wages −5%.',
+    req: { money: 250000000 } },
+  { id: 'union', type: 'wagecut', cut: 0.05, cost: 20000000000,
+    name: 'Bust the Union', flavor: 'Consultants are expensive, but worth it. Wages −5%.',
+    req: { money: 10000000000 } },
+  { id: 'automate', type: 'wagecut', cut: 0.05, cost: 1000000000000,
+    name: 'Automate Their Jobs (Keep the Output)', flavor: 'The machine does not ask for a raise. Wages −5%.',
+    req: { money: 500000000000 } },
+  { id: 'intern', type: 'wagecut', cut: 0.03, cost: 20000000000000,
+    name: 'Unpaid "Internships"', flavor: "It's an opportunity, really. Wages −3%.",
+    req: { money: 10000000000000 } },
 ];
 
 export function upgradeById(id) {
@@ -83,4 +103,13 @@ export function genMultiplier(genId, purchased) {
 /** Combined multiplier on the manual click value. */
 export function clickMultiplier(purchased) {
   return productOf((u) => u.type === 'click', purchased);
+}
+
+/** Total reduction to the wage rate from purchased wage-cut upgrades. */
+export function wageCutTotal(purchased) {
+  let cut = 0;
+  for (const u of upgrades) {
+    if (purchased[u.id] && u.type === 'wagecut') cut += u.cut;
+  }
+  return cut;
 }

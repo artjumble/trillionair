@@ -39,7 +39,7 @@
 
 ## Phase 4 — Satire systems
 - [x] Wages model: income = worker output − wages; show the wages line explicitly
-- [ ] "Cut wages / offshore / bust the union" upgrade branch that raises margins
+- [x] "Cut wages / offshore / bust the union" upgrade branch that raises margins
 - [ ] Worker-begging beat surfaced late (a sprite/line asking you to stop)
 - [ ] Comparison ticker across magnitude boundaries (nurses, teachers, world hunger, etc. — verify figures)
 - [ ] "You didn't build this" reveals tied to milestones

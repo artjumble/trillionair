@@ -3,7 +3,7 @@
 
 import { dec } from './format.js';
 import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
-import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier } from './upgrades.js';
+import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier, wageCutTotal } from './upgrades.js';
 import { achievementMultiplier, checkAchievements } from './achievements.js';
 import { potentialPrestige, prestigeMultiplier } from './prestige.js';
 import { metaById, metaIncomeMult, metaClickMult, metaStartingCash } from './metaupgrades.js';
@@ -75,6 +75,9 @@ export function recomputeIncome() {
     .mul(achievementMultiplier(state.achievements))
     .mul(prestigeMultiplier(state.prestige))
     .mul(metaIncomeMult(state.meta, state.prestige));
+
+  // Wage rate is the default share minus everything you've cut (floored at zero).
+  state.wageRate = Math.max(0, DEFAULT_WAGE_RATE - wageCutTotal(state.upgrades));
 
   // Workers produce a fixed gross (their labor doesn't change when you cut their pay).
   // You pay wageRate of it and keep the rest. At the default rate, net == production (no nerf).
