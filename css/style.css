@@ -181,6 +181,41 @@ body {
 .prestige-btn.is-armed { background: linear-gradient(180deg, #ff8a8a, var(--danger)); color: #2a0000; }
 .prestige-btn:disabled { cursor: not-allowed; opacity: 0.4; background: rgba(255, 255, 255, 0.12); color: var(--ink-dim); }
 
+.meta-upgrades {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 216, 77, 0.2);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
+.meta__name { font-weight: 700; color: var(--accent); font-size: 0.9rem; }
+.meta__flavor { font-size: 0.74rem; color: var(--ink-dim); margin-top: 0.15rem; }
+.meta__buy {
+  flex: 0 0 auto;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  background: linear-gradient(180deg, var(--accent), #e6b800);
+  color: #1a1300;
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.meta__buy:disabled { cursor: not-allowed; opacity: 0.45; background: rgba(255, 255, 255, 0.12); color: var(--ink-dim); }
+.meta.is-owned { border-color: var(--money); opacity: 0.85; }
+.meta.is-owned .meta__buy { background: none; color: var(--money); opacity: 1; }
+
 /* Generators */
 .generators-panel { display: flex; flex-direction: column; gap: 0.25rem; }
 .section-title { margin: 0; font-size: 1.25rem; }

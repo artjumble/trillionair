@@ -6,6 +6,7 @@ import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './g
 import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier } from './upgrades.js';
 import { achievementMultiplier, checkAchievements } from './achievements.js';
 import { potentialPrestige, prestigeMultiplier } from './prestige.js';
+import { metaById, metaIncomeMult, metaClickMult, metaStartingCash } from './metaupgrades.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -21,7 +22,9 @@ export const state = {
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
   achievements: {}, // achievement id -> true once earned
-  prestige: 0, // "Old Money" — banked inherited advantage; each gives +10% income forever
+  prestige: 0, // "Old Money" — current spendable balance; each held gives +10% income
+  prestigeEarned: 0, // total Old Money ever earned (governs gain; spending doesn't refund it)
+  meta: {}, // meta-upgrade id -> true; permanent, survives resets
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -62,27 +65,40 @@ export function recomputeIncome() {
   state.incomePerSec = total
     .mul(globalMultiplier(state.upgrades))
     .mul(achievementMultiplier(state.achievements))
-    .mul(prestigeMultiplier(state.prestige));
+    .mul(prestigeMultiplier(state.prestige))
+    .mul(metaIncomeMult(state.meta, state.prestige));
 }
 
-/** Old Money you'd bank by cashing out right now (above what you already hold). */
+/** Old Money you'd bank by cashing out now (based on total ever earned, so spending it can't be re-farmed). */
 export function prestigeGain() {
-  return Math.max(0, potentialPrestige(state.earnedTotal) - state.prestige);
+  return Math.max(0, potentialPrestige(state.earnedTotal) - state.prestigeEarned);
 }
 
 /**
  * Cash out / "go public": bank the prestige gain and wipe this run's money, generators,
- * and upgrades — but keep Old Money (and achievements, play time). Returns Old Money gained.
+ * and upgrades — but keep Old Money, meta-upgrades, achievements, and play time.
+ * Grants any inherited starting cash. Returns Old Money gained.
  */
 export function doPrestige() {
   const gain = prestigeGain();
   if (gain <= 0) return 0;
   state.prestige += gain;
-  state.money = new Decimal(0);
+  state.prestigeEarned += gain;
   for (const g of generators) state.owned[g.id] = 0;
   state.upgrades = {};
+  state.money = metaStartingCash(state.meta); // "Born on Third Base" head start
   recomputeAll();
   return gain;
+}
+
+/** Buy a permanent meta-upgrade with Old Money. Returns true on success. */
+export function buyMeta(id) {
+  const u = metaById(id);
+  if (!u || state.meta[id] || state.prestige < u.cost) return false;
+  state.prestige -= u.cost; // spend from balance; prestigeEarned is untouched
+  state.meta[id] = true;
+  recomputeAll();
+  return true;
 }
 
 /** Snapshot of values the achievement checks read. */
@@ -109,9 +125,9 @@ export function evaluateAchievements() {
   return newly;
 }
 
-/** Recompute the manual click value from purchased click upgrades (base $1). */
+/** Recompute the manual click value from purchased click upgrades and meta-upgrades (base $1). */
 export function recomputeClick() {
-  state.clickValue = clickMultiplier(state.upgrades);
+  state.clickValue = clickMultiplier(state.upgrades).mul(metaClickMult(state.meta));
 }
 
 /** Recompute every derived multiplier (income + click). */
@@ -166,6 +182,8 @@ export function save() {
     upgrades: state.upgrades,
     achievements: state.achievements,
     prestige: state.prestige,
+    prestigeEarned: state.prestigeEarned,
+    meta: state.meta,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -210,6 +228,9 @@ export function load() {
     state.upgrades = data.upgrades ?? {};
     state.achievements = data.achievements ?? {};
     state.prestige = data.prestige ?? 0;
+    // Migrate old saves: if total-earned wasn't tracked, assume none has been spent yet.
+    state.prestigeEarned = data.prestigeEarned ?? state.prestige;
+    state.meta = data.meta ?? {};
     recomputeAll();
     return true;
   } catch (err) {

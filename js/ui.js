@@ -1,10 +1,11 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
+import { metaUpgrades } from './metaupgrades.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -19,6 +20,8 @@ const genEls = {};
 const upgradeEls = {};
 // Cached references to each achievement badge, built once.
 const achEls = {};
+// Cached references to each meta-upgrade card, built once.
+const metaEls = {};
 
 // Current buy amount applied to all generators: 1, 10, or 'max'.
 let buyMode = 1;
@@ -49,6 +52,7 @@ export function bindUI() {
   });
   bindBuyModes();
   bindPrestige();
+  buildMeta();
   buildGenerators();
   buildUpgrades();
   buildAchievements();
@@ -68,6 +72,28 @@ function bindPrestige() {
     doPrestige();
     render();
   });
+}
+
+/** Build the meta-upgrade cards once; render() updates owned/affordable state. */
+function buildMeta() {
+  const container = el('meta-upgrades');
+  container.innerHTML = '';
+  for (const u of metaUpgrades) {
+    const card = document.createElement('div');
+    card.className = 'meta';
+    card.innerHTML = `
+      <div class="meta__info">
+        <div class="meta__name">${u.name}</div>
+        <div class="meta__flavor">${u.flavor}</div>
+      </div>
+      <button class="meta__buy" type="button" data-id="${u.id}">${u.cost} OM</button>`;
+    container.appendChild(card);
+    const btn = card.querySelector('.meta__buy');
+    btn.addEventListener('click', () => {
+      if (buyMeta(u.id)) render();
+    });
+    metaEls[u.id] = { card, btn };
+  }
 }
 
 /** Build a badge per achievement up front; render() flips earned styling. */
@@ -301,5 +327,15 @@ function renderPrestige() {
     btn.disabled = true;
     btn.classList.remove('is-armed');
     btn.textContent = have > 0 ? 'Nothing to cash out yet' : 'Build a fortune first';
+  }
+
+  // Meta-upgrades: mark owned, grey out when unaffordable in Old Money.
+  for (const u of metaUpgrades) {
+    const refs = metaEls[u.id];
+    if (!refs) continue;
+    const owned = !!state.meta[u.id];
+    refs.card.classList.toggle('is-owned', owned);
+    refs.btn.disabled = owned || state.prestige < u.cost;
+    refs.btn.textContent = owned ? 'Inherited' : `${u.cost} OM`;
   }
 }
