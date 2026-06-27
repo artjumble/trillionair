@@ -3,6 +3,7 @@
 
 import { dec } from './format.js';
 import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
+import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier } from './upgrades.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -16,6 +17,7 @@ export const state = {
   clickValue: new Decimal(1),
   incomePerSec: new Decimal(0), // recomputed from generators
   owned: {}, // generator id -> count owned (integer)
+  upgrades: {}, // upgrade id -> true once purchased
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -35,16 +37,44 @@ export function addMoney(amount) {
   state.earnedTotal = state.earnedTotal.add(a);
 }
 
-/** Recompute total passive income/sec from owned generators. */
+/** Recompute total passive income/sec from owned generators, milestones and upgrades. */
 export function recomputeIncome() {
   let total = new Decimal(0);
   for (const g of generators) {
     const owned = state.owned[g.id] || 0;
     if (owned > 0) {
-      total = total.add(new Decimal(g.baseIncome).mul(owned).mul(milestoneMult(owned)));
+      total = total.add(
+        new Decimal(g.baseIncome)
+          .mul(owned)
+          .mul(milestoneMult(owned))
+          .mul(genMultiplier(g.id, state.upgrades)),
+      );
     }
   }
-  state.incomePerSec = total;
+  state.incomePerSec = total.mul(globalMultiplier(state.upgrades));
+}
+
+/** Recompute the manual click value from purchased click upgrades (base $1). */
+export function recomputeClick() {
+  state.clickValue = clickMultiplier(state.upgrades);
+}
+
+/** Recompute every derived multiplier (income + click). */
+export function recomputeAll() {
+  recomputeIncome();
+  recomputeClick();
+}
+
+/** Buy a one-time upgrade if unlocked-and-affordable. Returns true on success. */
+export function buyUpgrade(id) {
+  const u = upgradeById(id);
+  if (!u || state.upgrades[id]) return false;
+  const cost = new Decimal(u.cost);
+  if (state.money.lt(cost)) return false;
+  state.money = state.money.sub(cost);
+  state.upgrades[id] = true;
+  recomputeAll();
+  return true;
 }
 
 /**
@@ -78,6 +108,7 @@ export function save() {
     earnedTotal: state.earnedTotal.toString(),
     clickValue: state.clickValue.toString(),
     owned: state.owned,
+    upgrades: state.upgrades,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -104,7 +135,8 @@ export function load() {
         state.owned[g.id] = data.owned[g.id] ?? 0;
       }
     }
-    recomputeIncome();
+    state.upgrades = data.upgrades ?? {};
+    recomputeAll();
     return true;
   } catch (err) {
     console.warn('Load failed:', err);

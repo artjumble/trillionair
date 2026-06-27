@@ -27,7 +27,7 @@
 ## Phase 2 — Depth
 - [x] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
 - [x] Milestone bonuses (owning 25/50/100 of a generator multiplies its output)
-- [ ] Multiplicative upgrade shop (global and per-generator multipliers)
+- [x] Multiplicative upgrade shop (global and per-generator multipliers)
 - [ ] Achievements with small permanent bonuses + an achievements panel
 - [ ] Offline progress: `income/sec × secondsAway × 0.5` (8h cap) + "Welcome back, you earned $X" modal
 

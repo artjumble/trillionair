@@ -1,7 +1,8 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
+import { upgrades, isUnlocked } from './upgrades.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -12,6 +13,8 @@ const TEACHER_SALARY = 69000;
 
 // Cached references to each generator row's dynamic elements, built once.
 const genEls = {};
+// Cached references to each upgrade card, built once.
+const upgradeEls = {};
 
 // Current buy amount applied to all generators: 1, 10, or 'max'.
 let buyMode = 1;
@@ -40,6 +43,28 @@ export function bindUI() {
   });
   bindBuyModes();
   buildGenerators();
+  buildUpgrades();
+}
+
+/** Build one card per upgrade up front; render() toggles visibility/affordability. */
+function buildUpgrades() {
+  const container = el('upgrades');
+  container.innerHTML = '';
+  for (const u of upgrades) {
+    const card = document.createElement('div');
+    card.className = 'upgrade';
+    card.hidden = true;
+    card.innerHTML = `
+      <div class="upgrade__name">${u.name}</div>
+      <div class="upgrade__flavor">${u.flavor}</div>
+      <button class="upgrade__buy" type="button" data-id="${u.id}">${money(u.cost)}</button>`;
+    container.appendChild(card);
+    const btn = card.querySelector('.upgrade__buy');
+    btn.addEventListener('click', () => {
+      if (buyUpgrade(u.id)) render();
+    });
+    upgradeEls[u.id] = { card, btn };
+  }
 }
 
 /** Wire the ×1 / ×10 / Max selector. */
@@ -146,5 +171,15 @@ export function render() {
     refs.cost.textContent = money(cost);
     // Disabled when the resolved purchase isn't affordable (Max of 0 means broke).
     refs.btn.disabled = count < 1 || state.money.lt(cost);
+  }
+
+  // Upgrades: reveal when unlocked, hide once purchased, grey out when unaffordable.
+  for (const u of upgrades) {
+    const refs = upgradeEls[u.id];
+    if (!refs) continue;
+    const purchased = !!state.upgrades[u.id];
+    const visible = !purchased && isUnlocked(u, state.owned, state.earnedTotal);
+    refs.card.hidden = !visible;
+    if (visible) refs.btn.disabled = state.money.lt(u.cost);
   }
 }
