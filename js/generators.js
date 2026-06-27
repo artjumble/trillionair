@@ -92,6 +92,21 @@ export function genById(id) {
   return generators.find((g) => g.id === id);
 }
 
+// Owning this many of a generator doubles its output, cumulatively (Cookie Clicker style).
+export const MILESTONES = [25, 50, 100, 150, 200, 300, 400, 500];
+
+/** Output multiplier from milestones reached at a given owned count (Decimal, 2^reached). */
+export function milestoneMult(owned) {
+  let reached = 0;
+  for (const m of MILESTONES) if (owned >= m) reached++;
+  return Decimal.pow(2, reached);
+}
+
+/** The next milestone threshold above `owned`, or null if all are reached. */
+export function nextMilestone(owned) {
+  return MILESTONES.find((m) => m > owned) ?? null;
+}
+
 /** Cost of the NEXT single unit given the current owned count. */
 export function unitCost(gen, owned) {
   return new Decimal(gen.baseCost).mul(Decimal.pow(gen.costMult, owned));

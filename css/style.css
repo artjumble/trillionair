@@ -202,6 +202,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 .gen__rate { color: var(--ink-dim); }
+.gen__mult { color: var(--accent); }
 
 .gen__buy {
   flex: 0 0 auto;

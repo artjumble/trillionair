@@ -1,7 +1,7 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
 import { state, GOAL, addMoney, goalProgress, buyGenerator } from './state.js';
-import { generators, bulkCost, maxAffordable } from './generators.js';
+import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -71,6 +71,7 @@ function buildGenerators() {
         <div class="gen__stats">
           <span class="gen__owned">0 owned</span>
           <span class="gen__rate">${money(g.baseIncome)}/sec each</span>
+          <span class="gen__mult"></span>
         </div>
       </div>
       <button class="gen__buy" type="button" data-id="${g.id}">
@@ -84,6 +85,8 @@ function buildGenerators() {
     });
     genEls[g.id] = {
       owned: row.querySelector('.gen__owned'),
+      rate: row.querySelector('.gen__rate'),
+      mult: row.querySelector('.gen__mult'),
       label: row.querySelector('.gen__buy-label'),
       cost: row.querySelector('.gen__cost'),
       btn,
@@ -122,6 +125,21 @@ export function render() {
     // In Max mode show the live count; otherwise the fixed multiplier.
     const shownCount = buyMode === 'max' ? Math.max(count, 1) : buyMode;
     const cost = bulkCost(g, owned, shownCount);
+
+    // Milestone bonus: effective per-unit rate and progress to the next doubling.
+    const mult = milestoneMult(owned);
+    const effPerUnit = dec(g.baseIncome).mul(mult);
+    const next = nextMilestone(owned);
+    refs.rate.textContent = `${money(effPerUnit)}/sec each`;
+    if (mult.gt(1) && next !== null) {
+      refs.mult.textContent = `★×${format(mult)} · next at ${next}`;
+    } else if (mult.gt(1)) {
+      refs.mult.textContent = `★×${format(mult)} · maxed`;
+    } else if (next !== null) {
+      refs.mult.textContent = `bonus at ${next}`;
+    } else {
+      refs.mult.textContent = '';
+    }
 
     refs.owned.textContent = `${owned} owned`;
     refs.label.textContent = buyMode === 'max' ? `Buy ×${count}` : `Buy ×${buyMode}`;

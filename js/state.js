@@ -2,7 +2,7 @@
 // The loop will grow this (generators, prestige, upgrades). Keep it the single source of truth.
 
 import { dec } from './format.js';
-import { generators, genById, bulkCost, maxAffordable } from './generators.js';
+import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -40,7 +40,9 @@ export function recomputeIncome() {
   let total = new Decimal(0);
   for (const g of generators) {
     const owned = state.owned[g.id] || 0;
-    if (owned > 0) total = total.add(new Decimal(g.baseIncome).mul(owned));
+    if (owned > 0) {
+      total = total.add(new Decimal(g.baseIncome).mul(owned).mul(milestoneMult(owned)));
+    }
   }
   state.incomePerSec = total;
 }
