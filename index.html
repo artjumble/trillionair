@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRILLIONAIRE — can one person really "earn" a trillion dollars?</title>
+  <meta name="description" content="A satirical incremental game about the absurdity of earning a trillion dollars." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main id="app">
+    <header class="topbar">
+      <h1 class="logo">TRILLIONAIRE</h1>
+      <p class="tagline">Earn <span class="goal-amount">$1,000,000,000,000</span>. How hard could it be?</p>
+    </header>
+
+    <p id="construction" class="construction">🚧 Under construction — the machine is being built one commit at a time.</p>
+
+    <section class="money-panel">
+      <div id="money" class="money">$0</div>
+      <div id="income-rate" class="income-rate">$0 / sec</div>
+
+      <button id="click-btn" class="click-btn" type="button">
+        <span class="click-btn__label">Work for it</span>
+        <span class="click-btn__sub">(the honest way)</span>
+      </button>
+
+      <div class="goal">
+        <div class="goal__bar"><div id="goal-fill" class="goal__fill"></div></div>
+        <div id="goal-label" class="goal__label">$0 of $1.00T</div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="footer__note">A trillion seconds is about 31,700 years. This is going to take a while.</p>
+    </footer>
+  </main>
+
+  <!-- Vendored big-number library (exposes global `Decimal`). Loaded as a classic script before modules. -->
+  <script src="js/lib/break_infinity.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

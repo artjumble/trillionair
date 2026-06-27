@@ -1,0 +1,143 @@
+/* TRILLIONAIRE — base styles. The loop will expand this as features land. */
+
+:root {
+  --bg: #0b1020;
+  --bg-soft: #131a30;
+  --ink: #eef2ff;
+  --ink-dim: #9aa6c4;
+  --money: #5ef0a8;
+  --accent: #ffd84d;
+  --danger: #ff6b6b;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 50% -10%, #1b2750 0%, var(--bg) 60%);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+#app {
+  width: min(720px, 100%);
+  padding: 2rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.topbar { text-align: center; }
+
+.logo {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 3.25rem);
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--accent), var(--money));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tagline { color: var(--ink-dim); margin: 0.25rem 0 0; }
+.goal-amount { color: var(--accent); white-space: nowrap; }
+
+.construction {
+  text-align: center;
+  color: var(--accent);
+  background: rgba(255, 216, 77, 0.08);
+  border: 1px dashed rgba(255, 216, 77, 0.4);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  margin: 0;
+}
+
+.money-panel {
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.money {
+  font-size: clamp(2.25rem, 9vw, 3.75rem);
+  font-weight: 800;
+  color: var(--money);
+  font-variant-numeric: tabular-nums;
+}
+
+.income-rate { color: var(--ink-dim); margin-top: -0.75rem; }
+
+.click-btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(180deg, var(--accent), #e6b800);
+  color: #1a1300;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  transition: transform 0.06s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.click-btn:active { transform: scale(0.94); }
+.click-btn__label { font-size: 1.2rem; }
+.click-btn__sub { font-size: 0.75rem; opacity: 0.7; font-weight: 600; }
+
+.goal { width: 100%; }
+.goal__bar {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.goal__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--money), var(--accent));
+  transition: width 0.3s ease;
+}
+.goal__label {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Floating "+$" feedback spawned on click. */
+.float-gain {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 800;
+  color: var(--money);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  animation: float-up 0.9s ease-out forwards;
+  z-index: 10;
+}
+@keyframes float-up {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-60px); opacity: 0; }
+}
+
+.footer { text-align: center; }
+.footer__note { color: var(--ink-dim); font-size: 0.85rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .click-btn, .goal__fill { transition: none; }
+  .float-gain { animation-duration: 0.01s; }
+}
