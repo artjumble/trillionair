@@ -28,7 +28,7 @@
 - [x] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
 - [x] Milestone bonuses (owning 25/50/100 of a generator multiplies its output)
 - [x] Multiplicative upgrade shop (global and per-generator multipliers)
-- [ ] Achievements with small permanent bonuses + an achievements panel
+- [x] Achievements with small permanent bonuses + an achievements panel
 - [ ] Offline progress: `income/sec × secondsAway × 0.5` (8h cap) + "Welcome back, you earned $X" modal
 
 ## Phase 3 — Prestige as inheritance

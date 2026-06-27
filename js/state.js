@@ -4,6 +4,7 @@
 import { dec } from './format.js';
 import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
 import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier } from './upgrades.js';
+import { achievementMultiplier, checkAchievements } from './achievements.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -18,6 +19,7 @@ export const state = {
   incomePerSec: new Decimal(0), // recomputed from generators
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
+  achievements: {}, // achievement id -> true once earned
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -51,7 +53,33 @@ export function recomputeIncome() {
       );
     }
   }
-  state.incomePerSec = total.mul(globalMultiplier(state.upgrades));
+  state.incomePerSec = total
+    .mul(globalMultiplier(state.upgrades))
+    .mul(achievementMultiplier(state.achievements));
+}
+
+/** Snapshot of values the achievement checks read. */
+function achievementContext() {
+  let totalOwned = 0;
+  for (const g of generators) totalOwned += state.owned[g.id] || 0;
+  return {
+    money: state.money,
+    earnedTotal: state.earnedTotal,
+    owned: state.owned,
+    upgrades: state.upgrades,
+    playSeconds: state.playSeconds,
+    totalOwned,
+  };
+}
+
+/**
+ * Award any newly-earned achievements and return them (for UI toasts).
+ * Recomputes income when something is earned, since each adds to the bonus.
+ */
+export function evaluateAchievements() {
+  const newly = checkAchievements(achievementContext(), state.achievements);
+  if (newly.length) recomputeIncome();
+  return newly;
 }
 
 /** Recompute the manual click value from purchased click upgrades (base $1). */
@@ -109,6 +137,7 @@ export function save() {
     clickValue: state.clickValue.toString(),
     owned: state.owned,
     upgrades: state.upgrades,
+    achievements: state.achievements,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -136,6 +165,7 @@ export function load() {
       }
     }
     state.upgrades = data.upgrades ?? {};
+    state.achievements = data.achievements ?? {};
     recomputeAll();
     return true;
   } catch (err) {

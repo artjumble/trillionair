@@ -1,7 +1,7 @@
 // Entry point. Boots state, wires UI, runs the tick loop.
 
-import { state, load, save } from './state.js';
-import { bindUI, render } from './ui.js';
+import { state, load, save, evaluateAchievements } from './state.js';
+import { bindUI, render, showAchievement } from './ui.js';
 
 const TICK_MS = 100; // 10 ticks/sec for smooth passive income later
 
@@ -15,6 +15,10 @@ function tick() {
     state.money = state.money.add(perTick);
     state.earnedTotal = state.earnedTotal.add(perTick);
   }
+
+  // Award and announce any newly-earned achievements.
+  for (const a of evaluateAchievements()) showAchievement(a);
+
   render();
 }
 

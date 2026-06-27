@@ -3,6 +3,7 @@
 import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
+import { achievements } from './achievements.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -15,6 +16,8 @@ const TEACHER_SALARY = 69000;
 const genEls = {};
 // Cached references to each upgrade card, built once.
 const upgradeEls = {};
+// Cached references to each achievement badge, built once.
+const achEls = {};
 
 // Current buy amount applied to all generators: 1, 10, or 'max'.
 let buyMode = 1;
@@ -44,6 +47,36 @@ export function bindUI() {
   bindBuyModes();
   buildGenerators();
   buildUpgrades();
+  buildAchievements();
+}
+
+/** Build a badge per achievement up front; render() flips earned styling. */
+function buildAchievements() {
+  const container = el('achievements');
+  container.innerHTML = '';
+  for (const a of achievements) {
+    const badge = document.createElement('div');
+    badge.className = 'ach is-locked';
+    badge.innerHTML = `
+      <div class="ach__name">${a.name}</div>
+      <div class="ach__desc">${a.desc}</div>`;
+    container.appendChild(badge);
+    achEls[a.id] = badge;
+  }
+}
+
+/** Show a transient toast when an achievement is earned. */
+export function showAchievement(a) {
+  const toasts = el('toasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span class="toast__tag">Achievement</span> ${a.name}`;
+  toasts.appendChild(toast);
+  const remove = () => toast.remove();
+  toast.addEventListener('animationend', (e) => {
+    if (e.animationName === 'toast-out') remove();
+  });
+  setTimeout(remove, 5000); // fallback if animations are disabled
 }
 
 /** Build one card per upgrade up front; render() toggles visibility/affordability. */
@@ -182,4 +215,14 @@ export function render() {
     refs.card.hidden = !visible;
     if (visible) refs.btn.disabled = state.money.lt(u.cost);
   }
+
+  // Achievements: light up earned badges, update the earned/total count.
+  let earnedCount = 0;
+  for (const a of achievements) {
+    const earned = !!state.achievements[a.id];
+    if (earned) earnedCount++;
+    const badge = achEls[a.id];
+    if (badge) badge.classList.toggle('is-locked', !earned);
+  }
+  el('ach-count').textContent = `${earnedCount}/${achievements.length}`;
 }
