@@ -7,6 +7,7 @@ import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier, wageCutT
 import { achievementMultiplier, checkAchievements } from './achievements.js';
 import { potentialPrestige, prestigeMultiplier } from './prestige.js';
 import { metaById, metaIncomeMult, metaClickMult, metaStartingCash } from './metaupgrades.js';
+import { checkReveals } from './reveals.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -29,6 +30,7 @@ export const state = {
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
   achievements: {}, // achievement id -> true once earned
+  reveals: {}, // "you didn't build this" reveal id -> true once shown
   prestige: 0, // "Old Money" — current spendable balance; each held gives +10% income
   prestigeEarned: 0, // total Old Money ever earned (governs gain; spending doesn't refund it)
   meta: {}, // meta-upgrade id -> true; permanent, survives resets
@@ -153,6 +155,11 @@ export function evaluateAchievements() {
   return newly;
 }
 
+/** Return any "you didn't build this" reveals newly unlocked by current wealth. */
+export function evaluateReveals() {
+  return checkReveals(state.money, state.reveals);
+}
+
 /** Recompute the manual click value from purchased click upgrades and meta-upgrades (base $1). */
 export function recomputeClick() {
   state.clickValue = clickMultiplier(state.upgrades).mul(metaClickMult(state.meta));
@@ -209,6 +216,7 @@ export function save() {
     owned: state.owned,
     upgrades: state.upgrades,
     achievements: state.achievements,
+    reveals: state.reveals,
     prestige: state.prestige,
     prestigeEarned: state.prestigeEarned,
     meta: state.meta,
@@ -257,6 +265,7 @@ export function load() {
     }
     state.upgrades = data.upgrades ?? {};
     state.achievements = data.achievements ?? {};
+    state.reveals = data.reveals ?? {};
     state.prestige = data.prestige ?? 0;
     // Migrate old saves: if total-earned wasn't tracked, assume none has been spent yet.
     state.prestigeEarned = data.prestigeEarned ?? state.prestige;

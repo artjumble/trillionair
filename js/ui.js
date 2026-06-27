@@ -184,6 +184,20 @@ export function showWelcomeBack({ seconds, amount, capped }) {
   modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
+/** Show a prominent, lingering "you didn't build this" reveal when a wealth milestone is crossed. */
+export function showReveal(text) {
+  const toasts = el('toasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast toast--reveal';
+  toast.innerHTML = `<span class="toast__tag">You didn't build this</span><div class="toast__reveal-body">${text}</div>`;
+  toasts.appendChild(toast);
+  const remove = () => toast.remove();
+  toast.addEventListener('animationend', (e) => {
+    if (e.animationName === 'toast-out') remove();
+  });
+  setTimeout(remove, 10000); // fallback; reveals linger longer than achievement toasts
+}
+
 /** Show a transient toast when an achievement is earned. */
 export function showAchievement(a) {
   const toasts = el('toasts');

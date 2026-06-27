@@ -394,9 +394,18 @@ body {
   color: var(--money);
   margin-right: 0.4rem;
 }
+.toast--reveal {
+  border-color: var(--danger);
+  max-width: 320px;
+  font-weight: 600;
+  animation: toast-in 0.4s ease-out, toast-out 0.6s ease-in 9s forwards;
+}
+.toast--reveal .toast__tag { color: var(--danger); }
+.toast__reveal-body { margin-top: 0.3rem; font-weight: 500; color: var(--ink); line-height: 1.4; }
+
 @keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes toast-out { to { transform: translateX(120%); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .toast, .toast--reveal { animation: none; } }
 
 /* Modal (welcome-back) */
 .modal {

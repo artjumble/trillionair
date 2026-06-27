@@ -37,12 +37,12 @@
 - [x] Meta-upgrade tree spending prestige currency (permanent multipliers)
 - [x] "New generation starts ahead" framing + copy; resets feel like inheritance/IPO, not punishment
 
-## Phase 4 — Satire systems
+## Phase 4 — Satire systems  ✅ **COMPLETE**
 - [x] Wages model: income = worker output − wages; show the wages line explicitly
 - [x] "Cut wages / offshore / bust the union" upgrade branch that raises margins
 - [x] Worker-begging beat surfaced late (a sprite/line asking you to stop)
 - [x] Comparison ticker across magnitude boundaries (nurses, teachers, world hunger, etc. — verify figures)
-- [ ] "You didn't build this" reveals tied to milestones
+- [x] "You didn't build this" reveals tied to milestones
 
 ## Phase 5 — Juice, sound, endgame & polish
 - [ ] Particle/coin bursts, button squash-stretch, milestone screen-shake
