@@ -1,13 +1,16 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
 import { state, GOAL, addMoney, goalProgress, buyGenerator } from './state.js';
-import { generators, unitCost } from './generators.js';
+import { generators, bulkCost, maxAffordable } from './generators.js';
 import { money } from './format.js';
 
 const el = (id) => document.getElementById(id);
 
 // Cached references to each generator row's dynamic elements, built once.
 const genEls = {};
+
+// Current buy amount applied to all generators: 1, 10, or 'max'.
+let buyMode = 1;
 
 /** Spawn a floating "+$" near the pointer for click feedback (first bit of juice). */
 function floatGain(amount, x, y) {
@@ -31,7 +34,23 @@ export function bindUI() {
     floatGain(state.clickValue, e.clientX, e.clientY);
     render();
   });
+  bindBuyModes();
   buildGenerators();
+}
+
+/** Wire the ×1 / ×10 / Max selector. */
+function bindBuyModes() {
+  const group = el('buy-modes');
+  group.addEventListener('click', (e) => {
+    const btn = e.target.closest('.buy-mode');
+    if (!btn) return;
+    const raw = btn.dataset.amount;
+    buyMode = raw === 'max' ? 'max' : Number(raw);
+    for (const b of group.querySelectorAll('.buy-mode')) {
+      b.classList.toggle('is-active', b === btn);
+    }
+    render();
+  });
 }
 
 /** Build the generator rows once; render() updates their dynamic bits. */
@@ -57,10 +76,11 @@ function buildGenerators() {
     container.appendChild(row);
     const btn = row.querySelector('.gen__buy');
     btn.addEventListener('click', () => {
-      if (buyGenerator(g.id)) render();
+      if (buyGenerator(g.id, buyMode)) render();
     });
     genEls[g.id] = {
       owned: row.querySelector('.gen__owned'),
+      label: row.querySelector('.gen__buy-label'),
       cost: row.querySelector('.gen__cost'),
       btn,
     };
@@ -82,9 +102,17 @@ export function render() {
     const refs = genEls[g.id];
     if (!refs) continue;
     const owned = state.owned[g.id] || 0;
-    const cost = unitCost(g, owned);
+
+    // Resolve how many units the current buy mode would purchase, and the cost.
+    const count = buyMode === 'max' ? maxAffordable(g, owned, state.money) : buyMode;
+    // In Max mode show the live count; otherwise the fixed multiplier.
+    const shownCount = buyMode === 'max' ? Math.max(count, 1) : buyMode;
+    const cost = bulkCost(g, owned, shownCount);
+
     refs.owned.textContent = `${owned} owned`;
+    refs.label.textContent = buyMode === 'max' ? `Buy ×${count}` : `Buy ×${buyMode}`;
     refs.cost.textContent = money(cost);
-    refs.btn.disabled = state.money.lt(cost);
+    // Disabled when the resolved purchase isn't affordable (Max of 0 means broke).
+    refs.btn.disabled = count < 1 || state.money.lt(cost);
   }
 }

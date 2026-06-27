@@ -16,7 +16,7 @@
 - [x] Click-to-earn button with a floating `+$` animation (first juice)
 - [x] Define 3–4 idle generators with `cost(n)=base×1.15^owned` and per-generator base income; data-driven config
 - [x] Generator UI: name, owned count, cost, income; greys out when unaffordable
-- [ ] Buy controls: **x1 / x10 / max** with correct geometric-sum cost math *(x1 done; x10/max pending)*
+- [x] Buy controls: **x1 / x10 / max** with correct geometric-sum cost math
 - [x] Live **income/sec** total wired into the tick loop (generators pay out passively)
 - [x] **$1T goal progress bar** with formatted current/target
 - [x] **Time-betrayal "honest labor" counter** (real $1/sec ticker showing it would take ~31,688 yrs) shown beside the player's wealth

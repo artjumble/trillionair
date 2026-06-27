@@ -2,7 +2,7 @@
 // The loop will grow this (generators, prestige, upgrades). Keep it the single source of truth.
 
 import { dec } from './format.js';
-import { generators, genById, unitCost } from './generators.js';
+import { generators, genById, bulkCost, maxAffordable } from './generators.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -45,17 +45,22 @@ export function recomputeIncome() {
   state.incomePerSec = total;
 }
 
-/** Buy one unit of a generator if affordable. Returns true on success. */
-export function buyGenerator(id) {
+/**
+ * Buy `amount` units of a generator (a number, or 'max' for as many as affordable).
+ * Never overspends. Returns the number of units actually bought.
+ */
+export function buyGenerator(id, amount = 1) {
   const g = genById(id);
-  if (!g) return false;
+  if (!g) return 0;
   const owned = state.owned[id] || 0;
-  const cost = unitCost(g, owned);
-  if (state.money.lt(cost)) return false;
+  let count = amount === 'max' ? maxAffordable(g, owned, state.money) : amount;
+  if (count <= 0) return 0;
+  const cost = bulkCost(g, owned, count);
+  if (state.money.lt(cost)) return 0;
   state.money = state.money.sub(cost);
-  state.owned[id] = owned + 1;
+  state.owned[id] = owned + count;
   recomputeIncome();
-  return true;
+  return count;
 }
 
 /** Fraction of the way to a trillion, clamped 0..1. */
