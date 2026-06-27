@@ -25,6 +25,7 @@ export const state = {
   prestige: 0, // "Old Money" — current spendable balance; each held gives +10% income
   prestigeEarned: 0, // total Old Money ever earned (governs gain; spending doesn't refund it)
   meta: {}, // meta-upgrade id -> true; permanent, survives resets
+  generation: 1, // which "generation" of the dynasty — increments on every cash-out
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -84,11 +85,22 @@ export function doPrestige() {
   if (gain <= 0) return 0;
   state.prestige += gain;
   state.prestigeEarned += gain;
+  state.generation += 1;
   for (const g of generators) state.owned[g.id] = 0;
   state.upgrades = {};
   state.money = metaStartingCash(state.meta); // "Born on Third Base" head start
   recomputeAll();
   return gain;
+}
+
+/** The unearned head start the next generation inherits — for the cash-out modal. */
+export function headStartSummary() {
+  return {
+    generation: state.generation,
+    prestige: state.prestige,
+    incomeMult: prestigeMultiplier(state.prestige).mul(metaIncomeMult(state.meta, state.prestige)),
+    startCash: metaStartingCash(state.meta),
+  };
 }
 
 /** Buy a permanent meta-upgrade with Old Money. Returns true on success. */
@@ -184,6 +196,7 @@ export function save() {
     prestige: state.prestige,
     prestigeEarned: state.prestigeEarned,
     meta: state.meta,
+    generation: state.generation,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -231,6 +244,7 @@ export function load() {
     // Migrate old saves: if total-earned wasn't tracked, assume none has been spent yet.
     state.prestigeEarned = data.prestigeEarned ?? state.prestige;
     state.meta = data.meta ?? {};
+    state.generation = data.generation ?? 1;
     recomputeAll();
     return true;
   } catch (err) {

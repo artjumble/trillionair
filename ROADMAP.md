@@ -31,11 +31,11 @@
 - [x] Achievements with small permanent bonuses + an achievements panel
 - [x] Offline progress: `income/sec × secondsAway × 0.5` (8h cap) + "Welcome back, you earned $X" modal
 
-## Phase 3 — Prestige as inheritance
+## Phase 3 — Prestige as inheritance  ✅ **COMPLETE**
 - [x] Prestige currency on a cube-root curve `p = k×cbrt(lifetime/SCALE)`; preview of gain
 - [x] Soft reset that wipes money/generators, keeps prestige currency + meta-upgrades
 - [x] Meta-upgrade tree spending prestige currency (permanent multipliers)
-- [ ] "New generation starts ahead" framing + copy; resets feel like inheritance/IPO, not punishment
+- [x] "New generation starts ahead" framing + copy; resets feel like inheritance/IPO, not punishment
 
 ## Phase 4 — Satire systems
 - [ ] Wages model: income = worker output − wages; show the wages line explicitly

@@ -1,6 +1,6 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
@@ -69,9 +69,27 @@ function bindPrestige() {
       return;
     }
     prestigeArmed = false;
-    doPrestige();
+    const gain = doPrestige();
     render();
+    if (gain > 0) showGeneration(gain);
   });
+}
+
+/** Celebrate the reset as inheritance: the new generation's unearned head start. */
+function showGeneration(gain) {
+  const { generation, prestige, incomeMult, startCash } = headStartSummary();
+  const bonuses = [];
+  bonuses.push(`<strong>${prestige} Old Money</strong> (×${format(incomeMult)} income before you lift a finger)`);
+  if (startCash.gt(0)) bonuses.push(`<strong>${money(startCash)}</strong> in seed money, already in the account`);
+  el('generation-body').innerHTML =
+    `You take the company public, pocket <strong>+${gain} Old Money</strong>, and hand the empire to your heirs. ` +
+    `<strong>Generation ${generation}</strong> begins already holding ${bonuses.join(' and ')}. ` +
+    `They did nothing to earn it. Honestly? Neither did you.`;
+  const modal = el('generation-modal');
+  modal.hidden = false;
+  const close = () => { modal.hidden = true; };
+  el('generation-close').onclick = close;
+  modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
 /** Build the meta-upgrade cards once; render() updates owned/affordable state. */
@@ -304,9 +322,9 @@ export function render() {
 /** The inheritance panel: held Old Money, its bonus, and the cash-out preview. */
 function renderPrestige() {
   const have = state.prestige;
-  el('prestige-have').textContent = have > 0
-    ? `${have} Old Money · +${Math.round(PRESTIGE_BONUS * 100 * have)}% income`
-    : '';
+  const genTag = state.generation > 1 ? `Gen ${state.generation}` : '';
+  const moneyTag = have > 0 ? `${have} Old Money · +${Math.round(PRESTIGE_BONUS * 100 * have)}% income` : '';
+  el('prestige-have').textContent = [genTag, moneyTag].filter(Boolean).join(' · ');
 
   const gain = prestigeGain();
   const btn = el('prestige-btn');
