@@ -11,14 +11,14 @@
 - [x] `git init`, remote, first commit, push to `main`
 
 ## Phase 1 — Playable MVP  **(THE GATE — do not pass until every box here is checked)**
-- [ ] State module: money/total/clickValue as `Decimal`, tick loop, `localStorage` save+load with versioned key
-- [ ] Number formatting: 3 sig figs + short suffixes (`K,M,B,T,Qa,Qi,Sx,Sp,Oc,No,Dc`), graceful fallback to scientific
-- [ ] Click-to-earn button with a floating `+$` animation (first juice)
-- [ ] Define 3–4 idle generators with `cost(n)=base×1.15^owned` and per-generator base income; data-driven config
-- [ ] Generator UI: name, owned count, cost, income; greys out when unaffordable
-- [ ] Buy controls: **x1 / x10 / max** with correct geometric-sum cost math
-- [ ] Live **income/sec** total wired into the tick loop (generators pay out passively)
-- [ ] **$1T goal progress bar** with formatted current/target
+- [x] State module: money/total/clickValue as `Decimal`, tick loop, `localStorage` save+load with versioned key
+- [x] Number formatting: 3 sig figs + short suffixes (`K,M,B,T,Qa,Qi,Sx,Sp,Oc,No,Dc`), graceful fallback to scientific
+- [x] Click-to-earn button with a floating `+$` animation (first juice)
+- [x] Define 3–4 idle generators with `cost(n)=base×1.15^owned` and per-generator base income; data-driven config
+- [x] Generator UI: name, owned count, cost, income; greys out when unaffordable
+- [ ] Buy controls: **x1 / x10 / max** with correct geometric-sum cost math *(x1 done; x10/max pending)*
+- [x] Live **income/sec** total wired into the tick loop (generators pay out passively)
+- [x] **$1T goal progress bar** with formatted current/target
 - [ ] **Time-betrayal "honest labor" counter** (real $1/sec ticker showing it would take ~31,688 yrs) shown beside the player's wealth
 - [ ] One **comparison annotation** that updates with wealth (e.g. "= N nurses' annual salaries" — verify figure)
 - [ ] MVP balance pass: reachable-but-absurdly-far feel; each purchase visibly matters
