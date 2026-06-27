@@ -447,7 +447,42 @@ body {
 .footer { text-align: center; }
 .footer__note { color: var(--ink-dim); font-size: 0.85rem; }
 
+/* Coin-burst particles on click. */
+.coin-particle {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 800;
+  color: var(--accent);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  z-index: 9;
+  animation: coin-fly 0.7s ease-out forwards;
+}
+@keyframes coin-fly {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+}
+
+/* Springy squash-stretch when the big button is pressed. */
+.click-btn.pop { animation: btn-pop 0.28s ease-out; }
+@keyframes btn-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.9); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* Milestone screen shake. */
+.shake { animation: shake 0.4s ease-in-out; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .click-btn, .goal__fill { transition: none; }
   .float-gain { animation-duration: 0.01s; }
+  .click-btn.pop, .shake { animation: none; }
 }

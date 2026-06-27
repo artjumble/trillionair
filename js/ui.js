@@ -70,11 +70,48 @@ function floatGain(amount, x, y) {
   setTimeout(remove, 1000);
 }
 
+const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Burst a few coin particles outward from a point (skipped under reduced-motion). */
+function coinBurst(x, y) {
+  if (reduceMotion()) return;
+  const N = 6;
+  for (let i = 0; i < N; i++) {
+    const p = document.createElement('div');
+    p.className = 'coin-particle';
+    p.textContent = '$';
+    const angle = (Math.PI * 2 * i) / N + Math.random() * 0.6;
+    const dist = 32 + Math.random() * 34;
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+    p.style.setProperty('--dy', `${Math.sin(angle) * dist - 18}px`);
+    document.body.appendChild(p);
+    const remove = () => p.remove();
+    p.addEventListener('animationend', remove);
+    setTimeout(remove, 900);
+  }
+}
+
+/** Briefly shake the app for a milestone moment (skipped under reduced-motion). */
+export function shakeScreen() {
+  if (reduceMotion()) return;
+  const app = el('app');
+  app.classList.remove('shake');
+  void app.offsetWidth; // force reflow so the animation can restart
+  app.classList.add('shake');
+}
+
 export function bindUI() {
   const btn = el('click-btn');
   btn.addEventListener('click', (e) => {
     addMoney(state.clickValue);
     floatGain(state.clickValue, e.clientX, e.clientY);
+    coinBurst(e.clientX, e.clientY);
+    // Springy squash-stretch on the button.
+    btn.classList.remove('pop');
+    void btn.offsetWidth;
+    btn.classList.add('pop');
     render();
   });
   bindBuyModes();
@@ -191,6 +228,7 @@ export function showReveal(text) {
   toast.className = 'toast toast--reveal';
   toast.innerHTML = `<span class="toast__tag">You didn't build this</span><div class="toast__reveal-body">${text}</div>`;
   toasts.appendChild(toast);
+  shakeScreen();
   const remove = () => toast.remove();
   toast.addEventListener('animationend', (e) => {
     if (e.animationName === 'toast-out') remove();

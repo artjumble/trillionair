@@ -45,7 +45,7 @@
 - [x] "You didn't build this" reveals tied to milestones
 
 ## Phase 5 — Juice, sound, endgame & polish
-- [ ] Particle/coin bursts, button squash-stretch, milestone screen-shake
+- [x] Particle/coin bursts, button squash-stretch, milestone screen-shake
 - [ ] Sound: pitch-randomized cha-ching, escalating audio by magnitude, mute setting
 - [ ] The **curdling dark turn** at/after $1T (celebration → ash, distorted audio)
 - [ ] Unspendable **"Spend It"** endgame screen (no purchase empties the account)
