@@ -240,6 +240,14 @@ body {
 .gen__buy-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
 .gen__cost { font-size: 1rem; font-variant-numeric: tabular-nums; }
 
+.comparison {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-top: 0.2rem;
+  min-height: 1.2em;
+}
+
 .footer { text-align: center; }
 .footer__note { color: var(--ink-dim); font-size: 0.85rem; }
 

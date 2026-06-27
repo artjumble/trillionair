@@ -2,9 +2,13 @@
 
 import { state, GOAL, addMoney, goalProgress, buyGenerator } from './state.js';
 import { generators, bulkCost, maxAffordable } from './generators.js';
-import { money } from './format.js';
+import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
+
+// Average U.S. public school teacher salary (~$69K, NEA 2023-24). Shown transparently
+// so the comparison is an honest translation of the pile, not a hidden claim.
+const TEACHER_SALARY = 69000;
 
 // Cached references to each generator row's dynamic elements, built once.
 const genEls = {};
@@ -97,6 +101,16 @@ export function render() {
 
   // The honest-labor counter: $1 for every second played. It crawls while your wealth booms.
   el('honest-earned').textContent = money(Math.floor(state.playSeconds));
+
+  // Comparison annotation: translate the abstract pile into people you could pay.
+  const perTeacher = dec(TEACHER_SALARY);
+  if (state.money.lt(perTeacher)) {
+    el('comparison').textContent = "…not yet one teacher's annual salary (~$69K).";
+  } else {
+    const teachers = state.money.div(perTeacher).floor();
+    const label = teachers.eq(1) ? '1 teacher' : `${format(teachers)} teachers`;
+    el('comparison').textContent = `≈ paying ${label} for a year (~$69K each)`;
+  }
 
   for (const g of generators) {
     const refs = genEls[g.id];
