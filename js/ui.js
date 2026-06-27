@@ -14,6 +14,25 @@ const el = (id) => document.getElementById(id);
 // so the comparison is an honest translation of the pile, not a hidden claim.
 const TEACHER_SALARY = 69000;
 
+// Worker pleas: surface once you start cutting wages, escalating as the rate drops.
+// Ordered mild -> severe; the most severe whose threshold the rate is under is shown.
+// Thresholds sit at the MIDPOINTS between the 0.30/0.25/0.20/… wage steps so the
+// float error in repeated subtraction (0.30-0.05-0.05 = 0.19999…) can't shift a beat.
+const WORKER_PLEAS = [
+  { below: 0.299, text: 'A worker asks if the new schedule is a mistake. You say you’ll look into it.' },
+  { below: 0.225, text: 'Someone from the floor left a note on your desk. You haven’t read it.' },
+  { below: 0.175, text: 'A worker waited outside your office for three hours. You took the back exit.' },
+  { below: 0.125, text: '“Please,” one of them says. “I have kids.” You nod, thoughtfully, and do nothing.' },
+  { below: 0.075, text: 'They’ve stopped asking for raises. Now they ask if their jobs are safe.' },
+  { below: 0.035, text: 'The line says “wages.” It used to have names attached.' },
+];
+
+function workerPlea(rate) {
+  let chosen = '';
+  for (const p of WORKER_PLEAS) if (rate < p.below) chosen = p.text;
+  return chosen;
+}
+
 // Cached references to each generator row's dynamic elements, built once.
 const genEls = {};
 // Cached references to each upgrade card, built once.
@@ -256,6 +275,9 @@ export function render() {
   } else {
     el('wage-breakdown').textContent = '';
   }
+
+  // Worker plea: an uncomfortable presence that grows as you cut wages.
+  el('worker-plea').textContent = state.grossPerSec.gt(0) ? workerPlea(state.wageRate) : '';
 
   const pct = goalProgress() * 100;
   el('goal-fill').style.width = pct.toFixed(6) + '%';

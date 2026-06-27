@@ -71,6 +71,16 @@ body {
 .wage-gross { color: var(--ink); }
 .wage-wages { color: var(--danger); }
 .wage-keep { color: var(--money); }
+.worker-plea {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #c98a8a;
+  text-align: center;
+  margin-top: 0.5rem;
+  min-height: 1.1em;
+  transition: opacity 0.4s ease;
+}
+.worker-plea:empty { margin-top: 0; }
 
 .click-btn {
   appearance: none;
