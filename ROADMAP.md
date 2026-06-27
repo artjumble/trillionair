@@ -25,7 +25,7 @@
 - [x] Remove the "under construction" banner; confirm clean load + working core loop, then **check the Phase 1 gate complete**
 
 ## Phase 2 — Depth
-- [ ] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
+- [x] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
 - [ ] Milestone bonuses (owning 25/50/100 of a generator multiplies its output)
 - [ ] Multiplicative upgrade shop (global and per-generator multipliers)
 - [ ] Achievements with small permanent bonuses + an achievements panel
