@@ -24,12 +24,12 @@
 - [x] MVP balance pass: reachable-but-absurdly-far feel; each purchase visibly matters
 - [x] Remove the "under construction" banner; confirm clean load + working core loop, then **check the Phase 1 gate complete**
 
-## Phase 2 — Depth
+## Phase 2 — Depth  ✅ **COMPLETE**
 - [x] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
 - [x] Milestone bonuses (owning 25/50/100 of a generator multiplies its output)
 - [x] Multiplicative upgrade shop (global and per-generator multipliers)
 - [x] Achievements with small permanent bonuses + an achievements panel
-- [ ] Offline progress: `income/sec × secondsAway × 0.5` (8h cap) + "Welcome back, you earned $X" modal
+- [x] Offline progress: `income/sec × secondsAway × 0.5` (8h cap) + "Welcome back, you earned $X" modal
 
 ## Phase 3 — Prestige as inheritance
 - [ ] Prestige currency on a cube-root curve `p = k×cbrt(lifetime/SCALE)`; preview of gain

@@ -71,6 +71,14 @@
 
   <div id="toasts" class="toasts" aria-live="polite"></div>
 
+  <div id="welcome-modal" class="modal" hidden>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <h2 id="welcome-title" class="modal__title">Money never sleeps 💤</h2>
+      <p id="welcome-body" class="modal__body"></p>
+      <button id="welcome-close" class="modal__btn" type="button">Collect (you earned it?)</button>
+    </div>
+  </div>
+
   <!-- Vendored big-number library (exposes global `Decimal`). Loaded as a classic script before modules. -->
   <script src="js/lib/break_infinity.js"></script>
   <script type="module" src="js/main.js"></script>

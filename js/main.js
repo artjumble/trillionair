@@ -1,7 +1,7 @@
 // Entry point. Boots state, wires UI, runs the tick loop.
 
-import { state, load, save, evaluateAchievements } from './state.js';
-import { bindUI, render, showAchievement } from './ui.js';
+import { state, load, save, evaluateAchievements, applyOfflineProgress } from './state.js';
+import { bindUI, render, showAchievement, showWelcomeBack } from './ui.js';
 
 const TICK_MS = 100; // 10 ticks/sec for smooth passive income later
 
@@ -24,8 +24,10 @@ function tick() {
 
 function boot() {
   load();
+  const offline = applyOfflineProgress();
   bindUI();
   render();
+  if (offline) showWelcomeBack(offline);
   setInterval(tick, TICK_MS);
   setInterval(save, 5000); // autosave every 5s
   window.addEventListener('beforeunload', save);

@@ -65,6 +65,32 @@ function buildAchievements() {
   }
 }
 
+/** Human-readable duration, e.g. "2h 14m", "5m 3s", "42s". */
+function humanDuration(s) {
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${sec}s`;
+  return `${sec}s`;
+}
+
+/** Welcome-back modal: money made money while you were gone. That's the trick. */
+export function showWelcomeBack({ seconds, amount, capped }) {
+  const body = el('welcome-body');
+  body.innerHTML =
+    `You were gone <strong>${humanDuration(seconds)}</strong>. ` +
+    `While you did absolutely nothing, your money earned <strong>${money(amount)}</strong>. ` +
+    `That's the whole trick, isn't it?` +
+    (capped ? ` <span class="modal__note">(Offline earnings capped at 8 hours — even the cap is generous.)</span>` : '');
+  const modal = el('welcome-modal');
+  modal.hidden = false;
+  const close = () => { modal.hidden = true; };
+  el('welcome-close').onclick = close;
+  modal.onclick = (e) => { if (e.target === modal) close(); };
+}
+
 /** Show a transient toast when an achievement is earned. */
 export function showAchievement(a) {
   const toasts = el('toasts');

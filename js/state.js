@@ -27,6 +27,10 @@ export const state = {
 // At $1/second, a trillion dollars is this many years away. (1e12 / 31,556,952 s/yr)
 export const HONEST_YEARS_TO_TRILLION = 31688;
 
+// Offline earnings: you get half your rate for being away, capped at 8 hours.
+export const OFFLINE_RATE = 0.5;
+export const OFFLINE_CAP_SECONDS = 8 * 3600;
+
 // Initialize owned counts to zero for every generator.
 generators.forEach((g) => {
   state.owned[g.id] = 0;
@@ -146,6 +150,21 @@ export function save() {
   } catch (err) {
     console.warn('Save failed:', err);
   }
+}
+
+/**
+ * Credit earnings for time away since the last save: income/sec × secondsAway × rate,
+ * capped at 8 hours. Returns { seconds, amount, capped } for the welcome-back modal,
+ * or null when there's nothing worth showing. Call once, after load().
+ */
+export function applyOfflineProgress() {
+  const away = Math.max(0, (Date.now() - state.lastSaved) / 1000);
+  const seconds = Math.min(away, OFFLINE_CAP_SECONDS);
+  if (seconds < 60 || state.incomePerSec.lte(0)) return null;
+  const amount = state.incomePerSec.mul(seconds * OFFLINE_RATE);
+  state.money = state.money.add(amount);
+  state.earnedTotal = state.earnedTotal.add(amount);
+  return { seconds, amount, capped: away > OFFLINE_CAP_SECONDS };
 }
 
 export function load() {
