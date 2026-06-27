@@ -48,16 +48,6 @@ body {
 .tagline { color: var(--ink-dim); margin: 0.25rem 0 0; }
 .goal-amount { color: var(--accent); white-space: nowrap; }
 
-.construction {
-  text-align: center;
-  color: var(--accent);
-  background: rgba(255, 216, 77, 0.08);
-  border: 1px dashed rgba(255, 216, 77, 0.4);
-  border-radius: var(--radius);
-  padding: 0.6rem 1rem;
-  margin: 0;
-}
-
 .money-panel {
   background: var(--bg-soft);
   border-radius: var(--radius);

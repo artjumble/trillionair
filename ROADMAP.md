@@ -10,7 +10,7 @@
 - [x] GitHub Actions workflow deploying repo root to GitHub Pages
 - [x] `git init`, remote, first commit, push to `main`
 
-## Phase 1 — Playable MVP  **(THE GATE — do not pass until every box here is checked)**
+## Phase 1 — Playable MVP  ✅ **COMPLETE — MVP gate met**
 - [x] State module: money/total/clickValue as `Decimal`, tick loop, `localStorage` save+load with versioned key
 - [x] Number formatting: 3 sig figs + short suffixes (`K,M,B,T,Qa,Qi,Sx,Sp,Oc,No,Dc`), graceful fallback to scientific
 - [x] Click-to-earn button with a floating `+$` animation (first juice)
@@ -22,7 +22,7 @@
 - [x] **Time-betrayal "honest labor" counter** (real $1/sec ticker showing it would take ~31,688 yrs) shown beside the player's wealth
 - [x] One **comparison annotation** that updates with wealth (e.g. "= N nurses' annual salaries" — verify figure)
 - [x] MVP balance pass: reachable-but-absurdly-far feel; each purchase visibly matters
-- [ ] Remove the "under construction" banner; confirm clean load + working core loop, then **check the Phase 1 gate complete**
+- [x] Remove the "under construction" banner; confirm clean load + working core loop, then **check the Phase 1 gate complete**
 
 ## Phase 2 — Depth
 - [ ] More generator tiers (target ~8–10 total), each ~5–10× the last, satirically themed
