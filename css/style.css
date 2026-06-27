@@ -134,6 +134,36 @@ body {
   to { transform: translateY(-60px); opacity: 0; }
 }
 
+/* Honest-labor counter — understated on purpose; the humble $1/sec next to the booming number. */
+.honest-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+.honest__label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+}
+.honest__amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+  margin: 0.2rem 0 0.4rem;
+}
+.honest__note {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  line-height: 1.4;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+.honest__note strong { color: var(--danger); }
+
 /* Generators */
 .generators-panel { display: flex; flex-direction: column; gap: 0.25rem; }
 .section-title { margin: 0; font-size: 1.25rem; }

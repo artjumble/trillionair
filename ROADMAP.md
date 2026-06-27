@@ -19,7 +19,7 @@
 - [ ] Buy controls: **x1 / x10 / max** with correct geometric-sum cost math *(x1 done; x10/max pending)*
 - [x] Live **income/sec** total wired into the tick loop (generators pay out passively)
 - [x] **$1T goal progress bar** with formatted current/target
-- [ ] **Time-betrayal "honest labor" counter** (real $1/sec ticker showing it would take ~31,688 yrs) shown beside the player's wealth
+- [x] **Time-betrayal "honest labor" counter** (real $1/sec ticker showing it would take ~31,688 yrs) shown beside the player's wealth
 - [ ] One **comparison annotation** that updates with wealth (e.g. "= N nurses' annual salaries" — verify figure)
 - [ ] MVP balance pass: reachable-but-absurdly-far feel; each purchase visibly matters
 - [ ] Remove the "under construction" banner; confirm clean load + working core loop, then **check the Phase 1 gate complete**

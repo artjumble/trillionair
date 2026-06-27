@@ -4,4 +4,5 @@
 > A fresh, memory-less loop run reconstructs state from here + ROADMAP.md.
 
 - 2026-06-27 — Bootstrap: GOAL.md, ROADMAP.md, scaffold, vendored break_infinity.js, GitHub Pages deploy workflow, first push — (initial commit)
+- 2026-06-27 — Time-betrayal "honest labor" counter: a muted $1/play-second ticker beside the booming wealth, with the "31,688 years to a trillion" gut-punch copy. Tracks `playSeconds` in state (persisted). Verified in-browser: ticks at $1/sec, correct copy, right placement, no console errors. (Also gitignored the scheduler lock file.)
 - 2026-06-27 — Idle generators vertical slice: 4 satirically-themed generators on the 1.15^owned curve (data-driven), generator UI with buy-x1 + grey-out-when-unaffordable, passive income/sec wired into the tick. Reconciled scaffold-delivered Phase 1 items (state, formatting, click+float, goal bar). Fixed a floating-`+$` DOM-node leak with a timeout fallback. Verified in-browser: no console errors, exact cost/income math, passive accrual.

@@ -16,8 +16,12 @@ export const state = {
   clickValue: new Decimal(1),
   incomePerSec: new Decimal(0), // recomputed from generators
   owned: {}, // generator id -> count owned (integer)
+  playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
+
+// At $1/second, a trillion dollars is this many years away. (1e12 / 31,556,952 s/yr)
+export const HONEST_YEARS_TO_TRILLION = 31688;
 
 // Initialize owned counts to zero for every generator.
 generators.forEach((g) => {
@@ -67,6 +71,7 @@ export function save() {
     earnedTotal: state.earnedTotal.toString(),
     clickValue: state.clickValue.toString(),
     owned: state.owned,
+    playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
   try {
@@ -84,6 +89,7 @@ export function load() {
     state.money = new Decimal(data.money ?? 0);
     state.earnedTotal = new Decimal(data.earnedTotal ?? 0);
     state.clickValue = new Decimal(data.clickValue ?? 1);
+    state.playSeconds = data.playSeconds ?? 0;
     state.lastSaved = data.lastSaved ?? Date.now();
     // Merge saved owned counts over the zero-initialized defaults (tolerates new generators).
     if (data.owned) {

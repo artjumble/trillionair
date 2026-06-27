@@ -75,6 +75,9 @@ export function render() {
   el('goal-fill').style.width = pct.toFixed(6) + '%';
   el('goal-label').textContent = `${money(state.money)} of ${money(GOAL)}`;
 
+  // The honest-labor counter: $1 for every second played. It crawls while your wealth booms.
+  el('honest-earned').textContent = money(Math.floor(state.playSeconds));
+
   for (const g of generators) {
     const refs = genEls[g.id];
     if (!refs) continue;

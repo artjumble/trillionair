@@ -6,7 +6,10 @@ import { bindUI, render } from './ui.js';
 const TICK_MS = 100; // 10 ticks/sec for smooth passive income later
 
 function tick() {
-  // Passive income (none until generators land in Phase 1).
+  // Real time spent playing — drives the "honest labor" $1/sec counter.
+  state.playSeconds += TICK_MS / 1000;
+
+  // Passive income from owned generators.
   if (state.incomePerSec.gt(0)) {
     const perTick = state.incomePerSec.mul(TICK_MS / 1000);
     state.money = state.money.add(perTick);

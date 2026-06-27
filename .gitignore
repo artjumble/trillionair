@@ -11,3 +11,6 @@ Thumbs.db
 # Local scratch
 *.log
 .tmp/
+
+# Claude Code scheduler runtime
+.claude/scheduled_tasks.lock
