@@ -44,7 +44,7 @@
 - [x] Comparison ticker across magnitude boundaries (nurses, teachers, world hunger, etc. — verify figures)
 - [x] "You didn't build this" reveals tied to milestones
 
-## Phase 5 — Juice, sound, endgame & polish
+## Phase 5 — Juice, sound, endgame & polish  ✅ **COMPLETE**
 - [x] Particle/coin bursts, button squash-stretch, milestone screen-shake
 - [x] Sound: pitch-randomized cha-ching, escalating audio by magnitude, mute setting
 - [x] The **curdling dark turn** at/after $1T (celebration → ash, distorted audio)
@@ -52,4 +52,4 @@
 - [x] Settings: scientific-notation toggle, mute, hard reset (with confirm)
 - [x] Accessibility pass (keyboard, contrast, reduced-motion, aria)
 - [x] Final balance tuning across the whole run to $1T
-- [ ] README polished with live URL + screenshot; final completion summary in PROGRESS.md
+- [x] README polished with live URL + screenshot; final completion summary in PROGRESS.md
