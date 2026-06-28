@@ -65,4 +65,4 @@
 - [x] Put sections (Inheritance, Upgrades, Shortcuts, etc.) into tabs.
 - [x] Expand the comparisons list.
 - [x] Bug: There isn't a clear indicator if a Shortcut has been used, or is available to use.
-- [ ] It should take much more time to reach 1T without using the Old Money resets.
+- [x] It should take much more time to reach 1T without using the Old Money resets.

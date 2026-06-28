@@ -5,6 +5,11 @@
 
 const Decimal = window.Decimal;
 
+// Global damper on all generator income. The honest (no-prestige) grind to $1T is meant to
+// be a long slog — Old Money resets (which multiply income) are the real way to get there.
+// Prestige multipliers stack on top of this, so resetting restores a brisk pace.
+export const INCOME_SCALE = 0.25;
+
 export const generators = [
   {
     id: 'lemonade',
@@ -94,12 +99,13 @@ export function genById(id) {
 
 // Owning this many of a generator doubles its output, cumulatively (Cookie Clicker style).
 export const MILESTONES = [25, 50, 100, 150, 200, 300, 400, 500];
+export const MILESTONE_MULT = 2;
 
-/** Output multiplier from milestones reached at a given owned count (Decimal, 2^reached). */
+/** Output multiplier from milestones reached at a given owned count. */
 export function milestoneMult(owned) {
   let reached = 0;
   for (const m of MILESTONES) if (owned >= m) reached++;
-  return Decimal.pow(2, reached);
+  return Decimal.pow(MILESTONE_MULT, reached);
 }
 
 /** The next milestone threshold above `owned`, or null if all are reached. */

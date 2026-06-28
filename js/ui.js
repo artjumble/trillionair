@@ -1,7 +1,7 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
 import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction, hardReset } from './state.js';
-import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
+import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone, INCOME_SCALE } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
@@ -501,7 +501,7 @@ export function render() {
 
     // Milestone bonus: effective per-unit rate and progress to the next doubling.
     const mult = milestoneMult(owned);
-    const effPerUnit = dec(g.baseIncome).mul(mult);
+    const effPerUnit = dec(g.baseIncome).mul(mult).mul(INCOME_SCALE);
     const next = nextMilestone(owned);
     refs.rate.textContent = `${money(effPerUnit)}/sec each`;
     if (mult.gt(1) && next !== null) {

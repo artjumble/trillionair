@@ -2,7 +2,7 @@
 // The loop will grow this (generators, prestige, upgrades). Keep it the single source of truth.
 
 import { dec } from './format.js';
-import { generators, genById, bulkCost, maxAffordable, milestoneMult } from './generators.js';
+import { generators, genById, bulkCost, maxAffordable, milestoneMult, INCOME_SCALE } from './generators.js';
 import { upgradeById, globalMultiplier, genMultiplier, clickMultiplier, wageCutTotal } from './upgrades.js';
 import { achievementMultiplier, checkAchievements } from './achievements.js';
 import { potentialPrestige, prestigeMultiplier } from './prestige.js';
@@ -80,6 +80,7 @@ export function recomputeIncome() {
     }
   }
   const production = total
+    .mul(INCOME_SCALE) // global damper: makes the no-prestige grind long
     .mul(globalMultiplier(state.upgrades))
     .mul(achievementMultiplier(state.achievements))
     .mul(prestigeMultiplier(state.prestige))
