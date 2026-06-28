@@ -521,14 +521,20 @@ export function render() {
     refs.btn.disabled = count < 1 || state.money.lt(cost);
   }
 
-  // Upgrades: reveal when unlocked, hide once purchased, grey out when unaffordable.
+  // Upgrades: keep owned ones visible (marked Active), highlight what you can afford,
+  // mute what's unlocked-but-unaffordable, and hide only what's still locked.
   for (const u of upgrades) {
     const refs = upgradeEls[u.id];
     if (!refs) continue;
     const purchased = !!state.upgrades[u.id];
-    const visible = !purchased && isUnlocked(u, state.owned, state.earnedTotal);
-    refs.card.hidden = !visible;
-    if (visible) refs.btn.disabled = state.money.lt(u.cost);
+    const unlocked = isUnlocked(u, state.owned, state.earnedTotal);
+    refs.card.hidden = !purchased && !unlocked;
+    if (refs.card.hidden) continue;
+    const affordable = !purchased && state.money.gte(u.cost);
+    refs.card.classList.toggle('is-owned', purchased);
+    refs.card.classList.toggle('is-available', affordable);
+    refs.btn.disabled = purchased || !affordable;
+    refs.btn.textContent = purchased ? '✓ Active' : money(u.cost);
   }
 
   // Achievements: light up earned badges, update the earned/total count.

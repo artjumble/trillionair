@@ -443,6 +443,26 @@ body {
   color: var(--ink-dim);
 }
 
+/* Shortcut states: available (can buy now), unaffordable (default), and owned (used). */
+.upgrade.is-available {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(255, 216, 77, 0.2);
+}
+.upgrade.is-available .upgrade__buy:not(:disabled) { animation: avail-pulse 1.8s ease-in-out infinite; }
+@keyframes avail-pulse { 50% { transform: scale(1.04); } }
+.upgrade.is-owned { opacity: 0.6; border-color: rgba(94, 240, 168, 0.4); }
+.upgrade.is-owned .upgrade__name::after { content: ' ✓'; color: var(--money); }
+.upgrade.is-owned .upgrade__buy {
+  background: none;
+  color: var(--money);
+  border: 1px solid rgba(94, 240, 168, 0.4);
+  opacity: 1;
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .upgrade.is-available .upgrade__buy { animation: none; }
+}
+
 /* Achievements */
 .achievements-panel { display: flex; flex-direction: column; gap: 0.25rem; }
 .ach-count { color: var(--ink-dim); font-size: 0.9rem; font-weight: 600; }
