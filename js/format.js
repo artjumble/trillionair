@@ -24,17 +24,27 @@ export function dec(value) {
 export function format(value) {
   const d = dec(value);
   if (d.lt(1000)) {
-    // Whole numbers under 1000 read cleaner without decimals.
-    return d.lt(10) ? d.toFixed(2).replace(/\.00$/, '') : d.toFixed(0);
+    if (d.lt(10)) {
+      // Floor to 2 decimals so we never display more than is actually there.
+      return floor2(d).toFixed(2).replace(/\.00$/, '');
+    }
+    return d.floor().toFixed(0);
   }
   if (sciNotation) return d.toExponential(2);
   const exp = Math.floor(d.log10());
   const tier = Math.floor(exp / 3);
   if (tier < SUFFIXES.length) {
     const scaled = d.div(Decimal.pow(10, tier * 3));
-    return scaled.toFixed(2) + SUFFIXES[tier];
+    // Floor to 2 decimals: displayed value is always ≤ the real value, so a shown
+    // amount that meets a shown cost is genuinely affordable (no off-by-one).
+    return floor2(scaled).toFixed(2) + SUFFIXES[tier];
   }
   return d.toExponential(2);
+}
+
+/** Floor a Decimal to 2 decimal places. */
+function floor2(d) {
+  return d.mul(100).floor().div(100);
 }
 
 /** Format a money value (prefixes a $). */

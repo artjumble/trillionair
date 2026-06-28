@@ -113,9 +113,13 @@ export function nextMilestone(owned) {
   return MILESTONES.find((m) => m > owned) ?? null;
 }
 
-/** Cost of the NEXT single unit given the current owned count. */
+/**
+ * Cost of the NEXT single unit given the current owned count, rounded UP to a whole
+ * dollar. Integer costs keep the displayed price, the affordability check, and the
+ * charge all in agreement — so a button enables exactly when you can afford what it shows.
+ */
 export function unitCost(gen, owned) {
-  return new Decimal(gen.baseCost).mul(Decimal.pow(gen.costMult, owned));
+  return new Decimal(gen.baseCost).mul(Decimal.pow(gen.costMult, owned)).ceil();
 }
 
 /**
@@ -128,7 +132,7 @@ export function bulkCost(gen, owned, count) {
   const first = unitCost(gen, owned);
   const num = Decimal.pow(r, count).sub(1);
   const den = r.sub(1);
-  return first.mul(num).div(den);
+  return first.mul(num).div(den).ceil();
 }
 
 /**
