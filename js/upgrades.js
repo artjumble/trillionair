@@ -8,18 +8,18 @@
 const Decimal = window.Decimal;
 
 export const upgrades = [
-  // --- Click: clicking stays trivial next to capital — that's the joke. ---
+  // --- Early picks, ordered by price (clicking stays trivial next to capital — that's the joke). ---
   { id: 'click_handshake', type: 'click', mult: 2, cost: 100,
     name: 'Firmer Handshake', flavor: 'Clicks earn ×2. It will still never matter.',
     req: { money: 50 } },
+  { id: 'up_lemo1', type: 'gen', target: 'lemonade', mult: 3, cost: 600,
+    name: 'Premium Lemons', flavor: 'Lemonade Stand output ×3.',
+    req: { gen: 'lemonade', owned: 10 } },
   { id: 'click_hustle', type: 'click', mult: 3, cost: 5000,
     name: 'Hustle Mindset™', flavor: 'Rise and grind. Clicks ×3. Passive income yawns.',
     req: { money: 2000 } },
 
-  // --- Per-generator: unlock by owning 10 of the target. ---
-  { id: 'up_lemo1', type: 'gen', target: 'lemonade', mult: 3, cost: 600,
-    name: 'Premium Lemons', flavor: 'Lemonade Stand output ×3.',
-    req: { gen: 'lemonade', owned: 10 } },
+  // --- Per-generator (rest): unlock by owning 10 of the target. ---
   { id: 'up_truck1', type: 'gen', target: 'foodtruck', mult: 3, cost: 12000,
     name: 'Franchise It', flavor: 'Food Truck output ×3.',
     req: { gen: 'foodtruck', owned: 10 } },
