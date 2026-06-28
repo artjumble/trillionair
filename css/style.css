@@ -95,6 +95,14 @@ body {
 .wage-gross { color: var(--ink); }
 .wage-wages { color: var(--danger); }
 .wage-keep { color: var(--money); }
+.workers-total {
+  font-size: 0.78rem;
+  color: var(--danger);
+  text-align: center;
+  margin-top: 0.3rem;
+  font-variant-numeric: tabular-nums;
+}
+.workers-total:empty { margin-top: 0; }
 .worker-plea {
   font-size: 0.8rem;
   font-style: italic;

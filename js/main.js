@@ -16,6 +16,11 @@ function tick() {
     state.earnedTotal = state.earnedTotal.add(perTick);
   }
 
+  // Bank the wages your workers are paid — the running tally you'd rather not see.
+  if (state.wagesPerSec.gt(0)) {
+    state.workersPaidTotal = state.workersPaidTotal.add(state.wagesPerSec.mul(TICK_MS / 1000));
+  }
+
   // Award and announce any newly-earned achievements.
   for (const a of evaluateAchievements()) showAchievement(a);
   // Surface any "you didn't build this" reveals crossed this tick.

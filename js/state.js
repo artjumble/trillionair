@@ -28,6 +28,7 @@ export const state = {
   incomePerSec: new Decimal(0), // net income you keep (gross − wages)
   grossPerSec: new Decimal(0), // total worker output before wages
   wagesPerSec: new Decimal(0), // what your workers are paid (the line you'll try to suppress)
+  workersPaidTotal: new Decimal(0), // all-time wages paid to workers (everyone, combined)
   wageRate: DEFAULT_WAGE_RATE, // share of gross paid to workers; cut-wages upgrades lower it
   owned: {}, // generator id -> count owned (integer)
   upgrades: {}, // upgrade id -> true once purchased
@@ -253,6 +254,7 @@ export function save() {
   const data = {
     money: state.money.toString(),
     earnedTotal: state.earnedTotal.toString(),
+    workersPaidTotal: state.workersPaidTotal.toString(),
     clickValue: state.clickValue.toString(),
     owned: state.owned,
     upgrades: state.upgrades,
@@ -310,6 +312,7 @@ export function load() {
     const data = JSON.parse(raw);
     state.money = new Decimal(data.money ?? 0);
     state.earnedTotal = new Decimal(data.earnedTotal ?? 0);
+    state.workersPaidTotal = new Decimal(data.workersPaidTotal ?? 0);
     state.clickValue = new Decimal(data.clickValue ?? 1);
     state.playSeconds = data.playSeconds ?? 0;
     state.lastSaved = data.lastSaved ?? Date.now();

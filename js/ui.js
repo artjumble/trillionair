@@ -468,6 +468,11 @@ export function render() {
     el('wage-breakdown').textContent = '';
   }
 
+  // The running tally of what your whole workforce has been paid, ever.
+  el('workers-total').textContent = state.workersPaidTotal.gt(0)
+    ? `Workers earned, all-time (everyone, combined): ${money(state.workersPaidTotal)}`
+    : '';
+
   // Worker plea: an uncomfortable presence that grows as you cut wages.
   el('worker-plea').textContent = state.grossPerSec.gt(0) ? workerPlea(state.wageRate) : '';
 
