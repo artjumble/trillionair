@@ -51,6 +51,8 @@ const upgradeEls = {};
 const achEls = {};
 // Cached references to each meta-upgrade card, built once.
 const metaEls = {};
+// Shortcut ids the player has already seen as available (so the tab badge clears on view).
+const seenShortcuts = new Set();
 // Cached references to each luxury card, built once.
 const luxuryEls = {};
 
@@ -538,6 +540,7 @@ export function render() {
 
   // Upgrades: keep owned ones visible (marked Active), highlight what you can afford,
   // mute what's unlocked-but-unaffordable, and hide only what's still locked.
+  const availableShortcutIds = [];
   for (const u of upgrades) {
     const refs = upgradeEls[u.id];
     if (!refs) continue;
@@ -546,10 +549,22 @@ export function render() {
     refs.card.hidden = !purchased && !unlocked;
     if (refs.card.hidden) continue;
     const affordable = !purchased && state.money.gte(u.cost);
+    if (affordable) availableShortcutIds.push(u.id);
     refs.card.classList.toggle('is-owned', purchased);
     refs.card.classList.toggle('is-available', affordable);
     refs.btn.disabled = purchased || !affordable;
     refs.btn.textContent = purchased ? '✓ Active' : money(u.cost);
+  }
+
+  // Badge the Shortcuts tab when an affordable shortcut you haven't looked at is waiting.
+  const shortcutsTab = document.querySelector('#tabs .tab[data-tab="shortcuts"]');
+  if (shortcutsTab) {
+    if (shortcutsTab.classList.contains('is-active')) {
+      availableShortcutIds.forEach((id) => seenShortcuts.add(id)); // viewing = seen
+      shortcutsTab.classList.remove('has-new');
+    } else {
+      shortcutsTab.classList.toggle('has-new', availableShortcutIds.some((id) => !seenShortcuts.has(id)));
+    }
   }
 
   // Achievements: light up earned badges, update the earned/total count.
