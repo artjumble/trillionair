@@ -421,6 +421,9 @@ body {
   flex-direction: column;
   gap: 0.35rem;
 }
+/* The class sets display:flex, which would otherwise beat the [hidden] attribute's
+   display:none — so locked upgrades must be hidden explicitly. */
+.upgrade[hidden] { display: none; }
 .upgrade__name { font-weight: 700; color: var(--accent); }
 .upgrade__flavor { font-size: 0.8rem; color: var(--ink-dim); flex: 1; }
 .upgrade__buy {
