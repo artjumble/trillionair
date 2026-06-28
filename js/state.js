@@ -35,6 +35,7 @@ export const state = {
   prestigeEarned: 0, // total Old Money ever earned (governs gain; spending doesn't refund it)
   meta: {}, // meta-upgrade id -> true; permanent, survives resets
   generation: 1, // which "generation" of the dynasty — increments on every cash-out
+  reachedTrillion: false, // has money ever crossed $1T — triggers the dark turn, then stays on
   muted: false, // sound on/off (persisted)
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
@@ -161,6 +162,15 @@ export function evaluateReveals() {
   return checkReveals(state.money, state.reveals);
 }
 
+/** True the single tick money first crosses $1T — the cue for the dark turn. */
+export function evaluateDarkTurn() {
+  if (!state.reachedTrillion && state.money.gte(GOAL)) {
+    state.reachedTrillion = true;
+    return true;
+  }
+  return false;
+}
+
 /** Recompute the manual click value from purchased click upgrades and meta-upgrades (base $1). */
 export function recomputeClick() {
   state.clickValue = clickMultiplier(state.upgrades).mul(metaClickMult(state.meta));
@@ -222,6 +232,7 @@ export function save() {
     prestigeEarned: state.prestigeEarned,
     meta: state.meta,
     generation: state.generation,
+    reachedTrillion: state.reachedTrillion,
     wageRate: state.wageRate,
     muted: state.muted,
     playSeconds: state.playSeconds,
@@ -273,6 +284,7 @@ export function load() {
     state.prestigeEarned = data.prestigeEarned ?? state.prestige;
     state.meta = data.meta ?? {};
     state.generation = data.generation ?? 1;
+    state.reachedTrillion = data.reachedTrillion ?? false;
     state.wageRate = data.wageRate ?? DEFAULT_WAGE_RATE;
     state.muted = data.muted ?? false;
     recomputeAll();

@@ -1,7 +1,7 @@
 // Entry point. Boots state, wires UI, runs the tick loop.
 
-import { state, load, save, evaluateAchievements, evaluateReveals, applyOfflineProgress } from './state.js';
-import { bindUI, render, showAchievement, showWelcomeBack, showReveal } from './ui.js';
+import { state, load, save, evaluateAchievements, evaluateReveals, evaluateDarkTurn, applyOfflineProgress } from './state.js';
+import { bindUI, render, showAchievement, showWelcomeBack, showReveal, triggerDarkTurn, applyDarkTurnMode } from './ui.js';
 
 const TICK_MS = 100; // 10 ticks/sec for smooth passive income later
 
@@ -20,6 +20,8 @@ function tick() {
   for (const a of evaluateAchievements()) showAchievement(a);
   // Surface any "you didn't build this" reveals crossed this tick.
   for (const r of evaluateReveals()) showReveal(r.text);
+  // The dark turn fires the moment money first crosses $1T.
+  if (evaluateDarkTurn()) triggerDarkTurn();
 
   render();
 }
@@ -28,6 +30,7 @@ function boot() {
   load();
   const offline = applyOfflineProgress();
   bindUI();
+  if (state.reachedTrillion) applyDarkTurnMode(); // already past $1T: stay curdled, no modal
   render();
   if (offline) showWelcomeBack(offline);
   setInterval(tick, TICK_MS);

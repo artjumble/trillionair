@@ -421,6 +421,22 @@ body {
 @keyframes toast-out { to { transform: translateX(120%); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .toast, .toast--reveal { animation: none; } }
 
+/* The dark turn: once you "earn" a trillion, the colour drains out of everything.
+   We drain the palette by overriding the theme variables (robust, no filter needed)
+   and add a grayscale filter on top where supported. */
+body.dark-turn {
+  --money: #9a9a9a;
+  --accent: #b3b3b3;
+  --ink: #d0d0d0;
+  --danger: #a06b6b;
+  filter: grayscale(0.7) brightness(0.85) contrast(1.04);
+  transition: filter 1.8s ease, background 1.8s ease;
+}
+body.dark-turn .coin-particle { color: #8c8c8c; } /* coins fall as ash */
+.modal--dark .modal__card { border-color: #888; }
+.modal--dark .modal__title { color: #d2d2d2; letter-spacing: 0.04em; }
+.modal--dark .modal__btn { background: linear-gradient(180deg, #b9b9b9, #8f8f8f); color: #1a1a1a; }
+
 /* Modal (welcome-back) */
 .modal {
   position: fixed;

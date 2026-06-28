@@ -4,12 +4,16 @@
 
 let ctx = null;
 let muted = false;
+let curdled = false; // after the dark turn, the cheerful sound sours
 
 export function setMuted(m) {
   muted = !!m;
 }
 export function isMuted() {
   return muted;
+}
+export function setCurdled(c) {
+  curdled = !!c;
 }
 
 function ensureCtx() {
@@ -49,6 +53,13 @@ function blip(freq, { type = 'triangle', dur = 0.08, gain = 0.05 } = {}) {
  */
 export function playClick(magnitude = 0) {
   if (muted) return;
+  if (curdled) {
+    // Low, detuned, descending — the triumphant "ching" rots into a sour buzz.
+    const base = 170 + Math.random() * 16;
+    blip(base, { type: 'sawtooth', dur: 0.13, gain: 0.05 });
+    setTimeout(() => blip(base * 0.97, { type: 'sawtooth', dur: 0.16, gain: 0.05 }), 60);
+    return;
+  }
   const base = 620 + Math.min(magnitude, 14) * 28 + (Math.random() * 40 - 20);
   blip(base, { dur: 0.06, gain: 0.045 });
   setTimeout(() => blip(base * 1.5, { dur: 0.08, gain: 0.045 }), 55);

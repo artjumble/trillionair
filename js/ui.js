@@ -7,7 +7,7 @@ import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
 import { metaUpgrades } from './metaupgrades.js';
 import { COMPARISONS } from './comparisons.js';
-import { setMuted, playClick, playBuy } from './sound.js';
+import { setMuted, setCurdled, playClick, playBuy } from './sound.js';
 import { money, format, dec } from './format.js';
 
 const el = (id) => document.getElementById(id);
@@ -234,6 +234,28 @@ export function showWelcomeBack({ seconds, amount, capped }) {
   modal.hidden = false;
   const close = () => { modal.hidden = true; };
   el('welcome-close').onclick = close;
+  modal.onclick = (e) => { if (e.target === modal) close(); };
+}
+
+/** Put the page into the curdled post-trillion mode (palette drains, sound sours). No modal. */
+export function applyDarkTurnMode() {
+  document.body.classList.add('dark-turn');
+  setCurdled(true);
+}
+
+/** The dark turn: you "earned" a trillion and the game refuses to celebrate. */
+export function triggerDarkTurn() {
+  applyDarkTurnMode();
+  shakeScreen();
+  el('darkturn-body').innerHTML =
+    'You earned it. <em>(You didn’t.)</em> The confetti isn’t coming. ' +
+    'Look around — nothing is different except the number, and the number was never the point. ' +
+    'You couldn’t spend this in a hundred lifetimes. But the meter is still running, ' +
+    'and the people whose wages you cut are still on the floor.';
+  const modal = el('darkturn-modal');
+  modal.hidden = false;
+  const close = () => { modal.hidden = true; };
+  el('darkturn-close').onclick = close;
   modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
