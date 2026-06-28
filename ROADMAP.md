@@ -50,6 +50,6 @@
 - [x] The **curdling dark turn** at/after $1T (celebration → ash, distorted audio)
 - [x] Unspendable **"Spend It"** endgame screen (no purchase empties the account)
 - [x] Settings: scientific-notation toggle, mute, hard reset (with confirm)
-- [ ] Accessibility pass (keyboard, contrast, reduced-motion, aria)
+- [x] Accessibility pass (keyboard, contrast, reduced-motion, aria)
 - [ ] Final balance tuning across the whole run to $1T
 - [ ] README polished with live URL + screenshot; final completion summary in PROGRESS.md

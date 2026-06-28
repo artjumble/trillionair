@@ -122,6 +122,14 @@ export function bindUI() {
   setMuted(state.muted);
   bindMute();
   bindSettings();
+  // Escape closes any open modal.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    for (const id of ['darkturn-modal', 'generation-modal', 'welcome-modal']) {
+      const m = el(id);
+      if (m && !m.hidden) m.hidden = true;
+    }
+  });
   bindBuyModes();
   bindPrestige();
   advanceComparison();
@@ -184,7 +192,10 @@ function bindSettings() {
 /** Wire the mute toggle; reflect state in the icon. */
 function bindMute() {
   const btn = el('mute-btn');
-  const sync = () => { btn.textContent = state.muted ? '🔇' : '🔊'; };
+  const sync = () => {
+    btn.textContent = state.muted ? '🔇' : '🔊';
+    btn.setAttribute('aria-pressed', String(state.muted));
+  };
   sync();
   btn.addEventListener('click', () => {
     state.muted = !state.muted;
@@ -224,6 +235,7 @@ function showGeneration(gain) {
   modal.hidden = false;
   const close = () => { modal.hidden = true; };
   el('generation-close').onclick = close;
+  el('generation-close').focus();
   modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
@@ -287,6 +299,7 @@ export function showWelcomeBack({ seconds, amount, capped }) {
   modal.hidden = false;
   const close = () => { modal.hidden = true; };
   el('welcome-close').onclick = close;
+  el('welcome-close').focus();
   modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
@@ -309,6 +322,7 @@ export function triggerDarkTurn() {
   modal.hidden = false;
   const close = () => { modal.hidden = true; };
   el('darkturn-close').onclick = close;
+  el('darkturn-close').focus();
   modal.onclick = (e) => { if (e.target === modal) close(); };
 }
 
@@ -371,7 +385,9 @@ function bindBuyModes() {
     const raw = btn.dataset.amount;
     buyMode = raw === 'max' ? 'max' : Number(raw);
     for (const b of group.querySelectorAll('.buy-mode')) {
-      b.classList.toggle('is-active', b === btn);
+      const active = b === btn;
+      b.classList.toggle('is-active', active);
+      b.setAttribute('aria-pressed', String(active));
     }
     render();
   });
@@ -434,6 +450,7 @@ export function render() {
 
   const pct = goalProgress() * 100;
   el('goal-fill').style.width = pct.toFixed(6) + '%';
+  el('goal-bar').setAttribute('aria-valuenow', pct.toFixed(2));
   el('goal-label').textContent = `${money(state.money)} of ${money(GOAL)}`;
 
   // The honest-labor counter: $1 for every second played. It crawls while your wealth booms.
