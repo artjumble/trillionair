@@ -477,11 +477,6 @@ export function render() {
     el('wage-breakdown').textContent = '';
   }
 
-  // The running tally of what your whole workforce has been paid, ever.
-  el('workers-total').textContent = state.workersPaidTotal.gt(0)
-    ? `Workers earned, all-time (everyone, combined): ${money(state.workersPaidTotal)}`
-    : '';
-
   // Worker plea: an uncomfortable presence that grows as you cut wages.
   el('worker-plea').textContent = state.grossPerSec.gt(0) ? workerPlea(state.wageRate) : '';
 
@@ -489,6 +484,12 @@ export function render() {
   el('goal-fill').style.width = pct.toFixed(6) + '%';
   el('goal-bar').setAttribute('aria-valuenow', pct.toFixed(2));
   el('goal-label').textContent = `${money(state.money)} of ${money(GOAL)}`;
+
+  // Red overlay on the goal bar: labor's cumulative share of all wealth created.
+  // It's the left slice of your green fill, and thins gradually as you cut wages.
+  const totalMade = state.money.add(state.workersPaidTotal);
+  const laborShare = totalMade.gt(0) ? state.workersPaidTotal.div(totalMade).toNumber() : 0;
+  el('goal-fill-workers').style.width = (laborShare * pct).toFixed(6) + '%';
 
   // The honest counter: what a $1M/year earner makes while you play. It crawls while you boom.
   el('honest-earned').textContent = money(state.playSeconds * HIGH_EARNER_PER_SEC);

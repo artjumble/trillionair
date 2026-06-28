@@ -19,7 +19,6 @@
       <div id="money" class="money">$0</div>
       <div id="income-rate" class="income-rate">$0 / sec</div>
       <div id="wage-breakdown" class="wage-breakdown"></div>
-      <div id="workers-total" class="workers-total"></div>
       <div id="worker-plea" class="worker-plea"></div>
 
       <button id="click-btn" class="click-btn" type="button">
@@ -28,7 +27,10 @@
       </button>
 
       <div class="goal">
-        <div class="goal__bar" id="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progress toward one trillion dollars"><div id="goal-fill" class="goal__fill"></div></div>
+        <div class="goal__bar" id="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progress toward one trillion dollars; the red portion is labor's share of the wealth">
+          <div id="goal-fill" class="goal__fill"></div>
+          <div id="goal-fill-workers" class="goal__fill-workers" aria-hidden="true"></div>
+        </div>
         <div id="goal-label" class="goal__label">$0 of $1.00T</div>
       </div>
 

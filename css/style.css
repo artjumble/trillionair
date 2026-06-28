@@ -95,14 +95,6 @@ body {
 .wage-gross { color: var(--ink); }
 .wage-wages { color: var(--danger); }
 .wage-keep { color: var(--money); }
-.workers-total {
-  font-size: 0.78rem;
-  color: var(--danger);
-  text-align: center;
-  margin-top: 0.3rem;
-  font-variant-numeric: tabular-nums;
-}
-.workers-total:empty { margin-top: 0; }
 .worker-plea {
   font-size: 0.8rem;
   font-style: italic;
@@ -136,6 +128,7 @@ body {
 
 .goal { width: 100%; }
 .goal__bar {
+  position: relative;
   height: 14px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
@@ -145,6 +138,17 @@ body {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--money), var(--accent));
+  transition: width 0.3s ease;
+}
+/* Labor's share, layered on the left of the green fill — no number, just the slice. */
+.goal__fill-workers {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--danger);
+  z-index: 1;
   transition: width 0.3s ease;
 }
 .goal__label {
