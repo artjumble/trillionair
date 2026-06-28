@@ -51,5 +51,5 @@
 - [x] Unspendable **"Spend It"** endgame screen (no purchase empties the account)
 - [x] Settings: scientific-notation toggle, mute, hard reset (with confirm)
 - [x] Accessibility pass (keyboard, contrast, reduced-motion, aria)
-- [ ] Final balance tuning across the whole run to $1T
+- [x] Final balance tuning across the whole run to $1T
 - [ ] README polished with live URL + screenshot; final completion summary in PROGRESS.md
