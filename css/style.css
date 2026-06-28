@@ -547,6 +547,14 @@ body.dark-turn .coin-particle { color: #8c8c8c; } /* coins fall as ash */
 .modal--dark .modal__card { border-color: #888; }
 .modal--dark .modal__title { color: #d2d2d2; letter-spacing: 0.04em; }
 .modal--dark .modal__btn { background: linear-gradient(180deg, #b9b9b9, #8f8f8f); color: #1a1a1a; }
+.darkturn-receipt {
+  display: block;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(160, 107, 107, 0.5);
+  color: #c98a8a;
+}
+.darkturn-receipt strong { color: #e6b0b0; }
 
 /* Modal (welcome-back) */
 .modal {

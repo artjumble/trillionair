@@ -336,11 +336,20 @@ export function applyDarkTurnMode() {
 export function triggerDarkTurn() {
   applyDarkTurnMode();
   shakeScreen();
+  // The receipt: what you kept vs what everyone who actually made it took home, combined.
+  let receipt = '';
+  if (state.workersPaidTotal.gt(0)) {
+    const ratio = state.money.div(state.workersPaidTotal);
+    receipt =
+      ` <span class="darkturn-receipt">Here's the receipt: you kept <strong>${money(state.money)}</strong>. ` +
+      `Everyone who actually built it — all of them, together — took home <strong>${money(state.workersPaidTotal)}</strong>. ` +
+      `You kept <strong>${format(ratio)}×</strong> what your whole workforce earned, combined. They made every cent. You kept the trillion.</span>`;
+  }
   el('darkturn-body').innerHTML =
     'You earned it. <em>(You didn’t.)</em> The confetti isn’t coming. ' +
     'Look around — nothing is different except the number, and the number was never the point. ' +
     'You couldn’t spend this in a hundred lifetimes. But the meter is still running, ' +
-    'and the people whose wages you cut are still on the floor.';
+    'and the people whose wages you cut are still on the floor.' + receipt;
   const modal = el('darkturn-modal');
   modal.hidden = false;
   const close = () => { modal.hidden = true; };
