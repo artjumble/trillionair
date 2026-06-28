@@ -63,6 +63,6 @@
 ## Phase 6 — Post release improvements
 
 - [x] Put sections (Inheritance, Upgrades, Shortcuts, etc.) into tabs.
-- [ ] Expand the comparisons list.
+- [x] Expand the comparisons list.
 - [ ] Bug: There isn't a clear indicator if a Shortcut has been used, or is available to use.
 - [ ] It should take much more time to reach 1T without using the Old Money resets.
