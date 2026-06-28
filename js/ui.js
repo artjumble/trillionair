@@ -122,6 +122,7 @@ export function bindUI() {
   setMuted(state.muted);
   bindMute();
   bindSettings();
+  bindTabs();
   // Escape closes any open modal.
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -187,6 +188,28 @@ function bindSettings() {
     hardReset();
     location.reload();
   });
+}
+
+/** Switch the visible tab panel and update the tab buttons. */
+function activateTab(name) {
+  for (const p of document.querySelectorAll('.tab-panel')) {
+    p.hidden = p.dataset.tab !== name;
+  }
+  for (const t of document.querySelectorAll('#tabs .tab')) {
+    const active = t.dataset.tab === name;
+    t.classList.toggle('is-active', active);
+    t.setAttribute('aria-selected', String(active));
+  }
+}
+
+/** Wire the tab bar. */
+function bindTabs() {
+  el('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab');
+    if (!btn || btn.hidden) return;
+    activateTab(btn.dataset.tab);
+  });
+  activateTab('businesses');
 }
 
 /** Wire the mute toggle; reflect state in the icon. */
@@ -522,10 +545,10 @@ export function render() {
   renderSpend();
 }
 
-/** The unspendable endgame: appears after the dark turn; you can never empty the account. */
+/** The unspendable endgame: its tab appears after the dark turn; you can never empty the account. */
 function renderSpend() {
-  const panel = el('spend-panel');
-  panel.hidden = !state.reachedTrillion;
+  // Reveal the Spend It tab once you've crossed $1T (the tab system owns panel visibility).
+  el('tab-spend-btn').hidden = !state.reachedTrillion;
   if (!state.reachedTrillion) return;
 
   const frac = emptiedFraction();

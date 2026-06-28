@@ -44,54 +44,65 @@
       </div>
     </section>
 
-    <section class="spend-panel" id="spend-panel" hidden>
-      <h2 class="section-title">Spend It</h2>
-      <p class="section-sub">You have a trillion dollars. Go on — try to get rid of it.</p>
-      <div class="spend-summary">
-        <div id="spend-stat" class="spend-stat"></div>
-        <div class="spend__bar"><div id="spend-fill" class="spend__fill"></div></div>
-        <div id="spend-note" class="spend-note"></div>
-      </div>
-      <div id="luxuries" class="luxuries"></div>
-    </section>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Game sections">
+      <button class="tab is-active" role="tab" data-tab="businesses" aria-selected="true">Businesses</button>
+      <button class="tab" role="tab" data-tab="shortcuts" aria-selected="false">Shortcuts</button>
+      <button class="tab" role="tab" data-tab="inheritance" aria-selected="false">Inheritance</button>
+      <button class="tab" role="tab" data-tab="achievements" aria-selected="false">Achievements</button>
+      <button class="tab" id="tab-spend-btn" role="tab" data-tab="spend" aria-selected="false" hidden>Spend It</button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </nav>
 
-    <section class="prestige-panel" id="prestige-panel">
-      <h2 class="section-title">Inheritance <span id="prestige-have" class="prestige-have"></span></h2>
-      <p class="section-sub" id="prestige-sub"></p>
-      <button id="prestige-btn" class="prestige-btn" type="button"></button>
-      <div id="meta-upgrades" class="meta-upgrades"></div>
-    </section>
+    <div class="tab-panels">
+      <section class="generators-panel tab-panel" data-tab="businesses" role="tabpanel" aria-label="Businesses">
+        <h2 class="section-title">Make money make money</h2>
+        <p class="section-sub">Buy things that earn while you do nothing. (This is where the real money is.)</p>
+        <div class="buy-modes" id="buy-modes" role="group" aria-label="Buy amount">
+          <button type="button" class="buy-mode is-active" data-amount="1" aria-pressed="true">Buy ×1</button>
+          <button type="button" class="buy-mode" data-amount="10" aria-pressed="false">Buy ×10</button>
+          <button type="button" class="buy-mode" data-amount="max" aria-pressed="false">Buy Max</button>
+        </div>
+        <div id="generators" class="generators"></div>
+      </section>
 
-    <section class="generators-panel">
-      <h2 class="section-title">Make money make money</h2>
-      <p class="section-sub">Buy things that earn while you do nothing. (This is where the real money is.)</p>
-      <div class="buy-modes" id="buy-modes" role="group" aria-label="Buy amount">
-        <button type="button" class="buy-mode is-active" data-amount="1" aria-pressed="true">Buy ×1</button>
-        <button type="button" class="buy-mode" data-amount="10" aria-pressed="false">Buy ×10</button>
-        <button type="button" class="buy-mode" data-amount="max" aria-pressed="false">Buy Max</button>
-      </div>
-      <div id="generators" class="generators"></div>
-    </section>
+      <section class="upgrades-panel tab-panel" data-tab="shortcuts" role="tabpanel" aria-label="Shortcuts" hidden>
+        <h2 class="section-title">Shortcuts</h2>
+        <p class="section-sub">One-time upgrades. Why work harder when you can change the rules?</p>
+        <div id="upgrades" class="upgrades"></div>
+      </section>
 
-    <section class="upgrades-panel">
-      <h2 class="section-title">Shortcuts</h2>
-      <p class="section-sub">One-time upgrades. Why work harder when you can change the rules?</p>
-      <div id="upgrades" class="upgrades"></div>
-    </section>
+      <section class="prestige-panel tab-panel" id="prestige-panel" data-tab="inheritance" role="tabpanel" aria-label="Inheritance" hidden>
+        <h2 class="section-title">Inheritance <span id="prestige-have" class="prestige-have"></span></h2>
+        <p class="section-sub" id="prestige-sub"></p>
+        <button id="prestige-btn" class="prestige-btn" type="button"></button>
+        <div id="meta-upgrades" class="meta-upgrades"></div>
+      </section>
 
-    <section class="achievements-panel">
-      <h2 class="section-title">Achievements <span id="ach-count" class="ach-count"></span></h2>
-      <p class="section-sub">The world applauds. Each one quietly pads your income a little more.</p>
-      <div id="achievements" class="achievements"></div>
-    </section>
+      <section class="achievements-panel tab-panel" data-tab="achievements" role="tabpanel" aria-label="Achievements" hidden>
+        <h2 class="section-title">Achievements <span id="ach-count" class="ach-count"></span></h2>
+        <p class="section-sub">The world applauds. Each one quietly pads your income a little more.</p>
+        <div id="achievements" class="achievements"></div>
+      </section>
 
-    <section class="settings-panel">
-      <h2 class="section-title">Settings</h2>
-      <div class="settings-row">
-        <label class="setting"><input type="checkbox" id="sci-toggle" /> Scientific notation</label>
-        <button id="hardreset-btn" class="setting-btn" type="button">Hard reset</button>
-      </div>
-    </section>
+      <section class="spend-panel tab-panel" id="spend-panel" data-tab="spend" role="tabpanel" aria-label="Spend It" hidden>
+        <h2 class="section-title">Spend It</h2>
+        <p class="section-sub">You have a trillion dollars. Go on — try to get rid of it.</p>
+        <div class="spend-summary">
+          <div id="spend-stat" class="spend-stat"></div>
+          <div class="spend__bar"><div id="spend-fill" class="spend__fill"></div></div>
+          <div id="spend-note" class="spend-note"></div>
+        </div>
+        <div id="luxuries" class="luxuries"></div>
+      </section>
+
+      <section class="settings-panel tab-panel" data-tab="settings" role="tabpanel" aria-label="Settings" hidden>
+        <h2 class="section-title">Settings</h2>
+        <div class="settings-row">
+          <label class="setting"><input type="checkbox" id="sci-toggle" /> Scientific notation</label>
+          <button id="hardreset-btn" class="setting-btn" type="button">Hard reset</button>
+        </div>
+      </section>
+    </div>
 
     <footer class="footer">
       <p class="footer__note">A trillion seconds is about 31,700 years. This is going to take a while.</p>
