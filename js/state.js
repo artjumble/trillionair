@@ -12,6 +12,7 @@ import { luxuryById } from './luxuries.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
+let wiped = false; // once a hard reset starts, block further saves (e.g. the beforeunload save)
 
 /** The whole point: one trillion dollars. */
 export const GOAL = new Decimal('1e12');
@@ -40,6 +41,7 @@ export const state = {
   spent: new Decimal(0), // total flung at luxuries in the unspendable endgame
   luxuries: {}, // luxury id -> count owned
   muted: false, // sound on/off (persisted)
+  sciNotation: false, // render big numbers in scientific notation
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
 };
@@ -241,6 +243,7 @@ export function goalProgress() {
 }
 
 export function save() {
+  if (wiped) return; // a hard reset is in progress — don't resurrect the save
   state.lastSaved = Date.now();
   const data = {
     money: state.money.toString(),
@@ -259,6 +262,7 @@ export function save() {
     luxuries: state.luxuries,
     wageRate: state.wageRate,
     muted: state.muted,
+    sciNotation: state.sciNotation,
     playSeconds: state.playSeconds,
     lastSaved: state.lastSaved,
   };
@@ -282,6 +286,16 @@ export function applyOfflineProgress() {
   state.money = state.money.add(amount);
   state.earnedTotal = state.earnedTotal.add(amount);
   return { seconds, amount, capped: away > OFFLINE_CAP_SECONDS };
+}
+
+/** Wipe the saved game entirely. Caller is responsible for reloading the page. */
+export function hardReset() {
+  wiped = true; // stop any further save() (incl. the beforeunload one fired by reload)
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (err) {
+    console.warn('Hard reset failed:', err);
+  }
 }
 
 export function load() {
@@ -313,6 +327,7 @@ export function load() {
     state.luxuries = data.luxuries ?? {};
     state.wageRate = data.wageRate ?? DEFAULT_WAGE_RATE;
     state.muted = data.muted ?? false;
+    state.sciNotation = data.sciNotation ?? false;
     recomputeAll();
     return true;
   } catch (err) {

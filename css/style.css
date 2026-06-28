@@ -520,6 +520,24 @@ body.dark-turn .coin-particle { color: #8c8c8c; } /* coins fall as ash */
 }
 .modal__btn:active { transform: scale(0.96); }
 
+/* Settings */
+.settings-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.setting { color: var(--ink-dim); font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+.setting input { cursor: pointer; }
+.setting-btn {
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.08);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 0.4rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.setting-btn.is-armed { background: var(--danger); color: #2a0000; }
+
 .footer { text-align: center; }
 .footer__note { color: var(--ink-dim); font-size: 0.85rem; }
 

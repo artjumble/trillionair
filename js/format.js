@@ -6,6 +6,12 @@ const Decimal = window.Decimal;
 // Short-scale suffixes. Extend as needed; falls back to scientific notation beyond.
 const SUFFIXES = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
 
+// When true, large numbers render in scientific notation (1.23e6) instead of suffixes.
+let sciNotation = false;
+export function setSciNotation(on) {
+  sciNotation = !!on;
+}
+
 /** Coerce a value to a Decimal. */
 export function dec(value) {
   return value instanceof Decimal ? value : new Decimal(value);
@@ -21,6 +27,7 @@ export function format(value) {
     // Whole numbers under 1000 read cleaner without decimals.
     return d.lt(10) ? d.toFixed(2).replace(/\.00$/, '') : d.toFixed(0);
   }
+  if (sciNotation) return d.toExponential(2);
   const exp = Math.floor(d.log10());
   const tier = Math.floor(exp / 3);
   if (tier < SUFFIXES.length) {

@@ -1,6 +1,6 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction, hardReset } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
@@ -9,7 +9,7 @@ import { metaUpgrades } from './metaupgrades.js';
 import { COMPARISONS } from './comparisons.js';
 import { luxuries } from './luxuries.js';
 import { setMuted, setCurdled, playClick, playBuy } from './sound.js';
-import { money, format, dec } from './format.js';
+import { money, format, dec, setSciNotation } from './format.js';
 
 const el = (id) => document.getElementById(id);
 
@@ -121,6 +121,7 @@ export function bindUI() {
   });
   setMuted(state.muted);
   bindMute();
+  bindSettings();
   bindBuyModes();
   bindPrestige();
   advanceComparison();
@@ -152,6 +153,32 @@ function buildLuxuries() {
     });
     luxuryEls[l.id] = { btn, owned: card.querySelector('.luxury__owned') };
   }
+}
+
+/** Wire the settings panel: scientific-notation toggle and a two-click hard reset. */
+function bindSettings() {
+  const sci = el('sci-toggle');
+  sci.checked = state.sciNotation;
+  setSciNotation(state.sciNotation);
+  sci.addEventListener('change', () => {
+    state.sciNotation = sci.checked;
+    setSciNotation(sci.checked);
+    render();
+  });
+
+  const hr = el('hardreset-btn');
+  let armed = false;
+  hr.addEventListener('click', () => {
+    if (!armed) {
+      armed = true;
+      hr.textContent = 'Click again to wipe EVERYTHING';
+      hr.classList.add('is-armed');
+      setTimeout(() => { armed = false; hr.textContent = 'Hard reset'; hr.classList.remove('is-armed'); }, 3000);
+      return;
+    }
+    hardReset();
+    location.reload();
+  });
 }
 
 /** Wire the mute toggle; reflect state in the icon. */
