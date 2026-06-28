@@ -1,12 +1,13 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
 import { PRESTIGE_BONUS, earningsForPrestige } from './prestige.js';
 import { metaUpgrades } from './metaupgrades.js';
 import { COMPARISONS } from './comparisons.js';
+import { luxuries } from './luxuries.js';
 import { setMuted, setCurdled, playClick, playBuy } from './sound.js';
 import { money, format, dec } from './format.js';
 
@@ -50,6 +51,8 @@ const upgradeEls = {};
 const achEls = {};
 // Cached references to each meta-upgrade card, built once.
 const metaEls = {};
+// Cached references to each luxury card, built once.
+const luxuryEls = {};
 
 // Current buy amount applied to all generators: 1, 10, or 'max'.
 let buyMode = 1;
@@ -123,9 +126,32 @@ export function bindUI() {
   advanceComparison();
   setInterval(advanceComparison, 4500); // rotate the comparison ticker
   buildMeta();
+  buildLuxuries();
   buildGenerators();
   buildUpgrades();
   buildAchievements();
+}
+
+/** Build the luxury cards once; render() updates owned/affordable state. */
+function buildLuxuries() {
+  const container = el('luxuries');
+  container.innerHTML = '';
+  for (const l of luxuries) {
+    const card = document.createElement('div');
+    card.className = 'luxury';
+    card.innerHTML = `
+      <div class="luxury__info">
+        <div class="luxury__name">${l.name} <span class="luxury__owned" data-id="${l.id}"></span></div>
+        <div class="luxury__flavor">${l.flavor}</div>
+      </div>
+      <button class="luxury__buy" type="button" data-id="${l.id}">${money(l.price)}</button>`;
+    container.appendChild(card);
+    const btn = card.querySelector('.luxury__buy');
+    btn.addEventListener('click', () => {
+      if (buyLuxury(l.id)) { playBuy(); render(); }
+    });
+    luxuryEls[l.id] = { btn, owned: card.querySelector('.luxury__owned') };
+  }
 }
 
 /** Wire the mute toggle; reflect state in the icon. */
@@ -449,6 +475,32 @@ export function render() {
   el('ach-count').textContent = `${earnedCount}/${achievements.length}`;
 
   renderPrestige();
+  renderSpend();
+}
+
+/** The unspendable endgame: appears after the dark turn; you can never empty the account. */
+function renderSpend() {
+  const panel = el('spend-panel');
+  panel.hidden = !state.reachedTrillion;
+  if (!state.reachedTrillion) return;
+
+  const frac = emptiedFraction();
+  el('spend-stat').innerHTML =
+    `Flung away: <strong>${money(state.spent)}</strong> · Still have: <strong>${money(state.money)}</strong>`;
+  // The bar shows how little of the fortune you've actually managed to spend.
+  el('spend-fill').style.width = `${Math.min(100, frac * 100).toFixed(4)}%`;
+  const pctStr = (frac * 100).toPrecision(2);
+  el('spend-note').textContent =
+    `You've gotten rid of ${pctStr}% of it. At $1 million a day it would take 2,740 years — ` +
+    `and the account refills faster than you can spend.`;
+
+  for (const l of luxuries) {
+    const refs = luxuryEls[l.id];
+    if (!refs) continue;
+    const owned = state.luxuries[l.id] || 0;
+    refs.owned.textContent = owned > 0 ? `×${owned}` : '';
+    refs.btn.disabled = state.money.lt(l.price);
+  }
 }
 
 /** The inheritance panel: held Old Money, its bonus, and the cash-out preview. */

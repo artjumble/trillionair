@@ -8,6 +8,7 @@ import { achievementMultiplier, checkAchievements } from './achievements.js';
 import { potentialPrestige, prestigeMultiplier } from './prestige.js';
 import { metaById, metaIncomeMult, metaClickMult, metaStartingCash } from './metaupgrades.js';
 import { checkReveals } from './reveals.js';
+import { luxuryById } from './luxuries.js';
 
 const Decimal = window.Decimal;
 const SAVE_KEY = 'trillionaire_save_v1';
@@ -36,6 +37,8 @@ export const state = {
   meta: {}, // meta-upgrade id -> true; permanent, survives resets
   generation: 1, // which "generation" of the dynasty — increments on every cash-out
   reachedTrillion: false, // has money ever crossed $1T — triggers the dark turn, then stays on
+  spent: new Decimal(0), // total flung at luxuries in the unspendable endgame
+  luxuries: {}, // luxury id -> count owned
   muted: false, // sound on/off (persisted)
   playSeconds: 0, // real seconds spent playing — drives the "honest labor" ($1/sec) counter
   lastSaved: Date.now(),
@@ -121,6 +124,25 @@ export function headStartSummary() {
     incomeMult: prestigeMultiplier(state.prestige).mul(metaIncomeMult(state.meta, state.prestige)),
     startCash: metaStartingCash(state.meta),
   };
+}
+
+/** Buy a luxury in the endgame: spend the money, count it, track the futile total. */
+export function buyLuxury(id) {
+  const l = luxuryById(id);
+  if (!l) return false;
+  const cost = new Decimal(l.price);
+  if (state.money.lt(cost)) return false;
+  state.money = state.money.sub(cost);
+  state.spent = state.spent.add(cost);
+  state.luxuries[id] = (state.luxuries[id] || 0) + 1;
+  return true;
+}
+
+/** Fraction of your fortune you've actually managed to get rid of (stays near zero). */
+export function emptiedFraction() {
+  const total = state.spent.add(state.money);
+  if (total.lte(0)) return 0;
+  return state.spent.div(total).toNumber();
 }
 
 /** Buy a permanent meta-upgrade with Old Money. Returns true on success. */
@@ -233,6 +255,8 @@ export function save() {
     meta: state.meta,
     generation: state.generation,
     reachedTrillion: state.reachedTrillion,
+    spent: state.spent.toString(),
+    luxuries: state.luxuries,
     wageRate: state.wageRate,
     muted: state.muted,
     playSeconds: state.playSeconds,
@@ -285,6 +309,8 @@ export function load() {
     state.meta = data.meta ?? {};
     state.generation = data.generation ?? 1;
     state.reachedTrillion = data.reachedTrillion ?? false;
+    state.spent = new Decimal(data.spent ?? 0);
+    state.luxuries = data.luxuries ?? {};
     state.wageRate = data.wageRate ?? DEFAULT_WAGE_RATE;
     state.muted = data.muted ?? false;
     recomputeAll();

@@ -48,7 +48,7 @@
 - [x] Particle/coin bursts, button squash-stretch, milestone screen-shake
 - [x] Sound: pitch-randomized cha-ching, escalating audio by magnitude, mute setting
 - [x] The **curdling dark turn** at/after $1T (celebration → ash, distorted audio)
-- [ ] Unspendable **"Spend It"** endgame screen (no purchase empties the account)
+- [x] Unspendable **"Spend It"** endgame screen (no purchase empties the account)
 - [ ] Settings: scientific-notation toggle, mute, hard reset (with confirm)
 - [ ] Accessibility pass (keyboard, contrast, reduced-motion, aria)
 - [ ] Final balance tuning across the whole run to $1T
