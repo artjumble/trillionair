@@ -46,8 +46,12 @@ export const state = {
   lastSaved: Date.now(),
 };
 
-// At $1/second, a trillion dollars is this many years away. (1e12 / 31,556,952 s/yr)
-export const HONEST_YEARS_TO_TRILLION = 31688;
+// The "honest" benchmark is a genuinely high earner: $1,000,000 a year. Even at that rate,
+// reaching a trillion takes 1e12 / 1e6 = 1,000,000 years.
+export const HIGH_EARNER_ANNUAL = 1000000;
+export const SECONDS_PER_YEAR = 31556952; // 365.2425 days
+export const HIGH_EARNER_PER_SEC = HIGH_EARNER_ANNUAL / SECONDS_PER_YEAR; // ≈ $0.0317/sec
+export const HIGH_EARNER_YEARS_TO_TRILLION = 1000000;
 
 // Offline earnings: you get half your rate for being away, capped at 8 hours.
 export const OFFLINE_RATE = 0.5;

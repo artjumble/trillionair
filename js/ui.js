@@ -1,6 +1,6 @@
 // DOM rendering and input wiring. Keep DOM concerns here; keep economy in state.js.
 
-import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction, hardReset } from './state.js';
+import { state, GOAL, addMoney, goalProgress, buyGenerator, buyUpgrade, prestigeGain, doPrestige, buyMeta, headStartSummary, buyLuxury, emptiedFraction, hardReset, HIGH_EARNER_PER_SEC } from './state.js';
 import { generators, bulkCost, maxAffordable, milestoneMult, nextMilestone, INCOME_SCALE } from './generators.js';
 import { upgrades, isUnlocked } from './upgrades.js';
 import { achievements } from './achievements.js';
@@ -476,8 +476,8 @@ export function render() {
   el('goal-bar').setAttribute('aria-valuenow', pct.toFixed(2));
   el('goal-label').textContent = `${money(state.money)} of ${money(GOAL)}`;
 
-  // The honest-labor counter: $1 for every second played. It crawls while your wealth booms.
-  el('honest-earned').textContent = money(Math.floor(state.playSeconds));
+  // The honest counter: what a $1M/year earner makes while you play. It crawls while you boom.
+  el('honest-earned').textContent = money(state.playSeconds * HIGH_EARNER_PER_SEC);
 
   // Comparison ticker: translate the abstract pile into a rotating real-world equivalent.
   if (comparisonIndex < 0) {

@@ -68,3 +68,4 @@
 - [x] It should take much more time to reach 1T without using the Old Money resets.
 - [x] Bug: Buttons don't enable until amount is "over" button value. For example, button says $34 but doesn't enable until player amount shows $35
 - [x] Bug: Shortcut buttons appear enabled initially. For example the Firmer Handshake button is enabled until the player gets ~$50 then it switches to disabled. Once the player gets the right amount of money, then button appears enabled with the grow/shrink effect.
+- [x] Reframe the "honest labor" counter on a high earner ($1M/year) instead of $1/sec, and point out even they need 1,000,000 years.
