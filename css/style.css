@@ -673,3 +673,26 @@ body.dark-turn .coin-particle { color: #8c8c8c; } /* coins fall as ash */
   .float-gain { animation-duration: 0.01s; }
   .click-btn.pop, .shake { animation: none; }
 }
+
+/* Purchase feedback: a glow ring on the bought card (box-shadow only, so no layout
+   shift) plus a label floating up off its buy button. */
+.gen.bought, .upgrade.bought, .meta.bought, .luxury.bought { animation: buy-flash 0.45s ease-out; }
+@keyframes buy-flash {
+  0% { box-shadow: 0 0 0 2px var(--money), 0 0 18px rgba(94, 240, 168, 0.45); }
+  100% { box-shadow: 0 0 0 2px transparent, 0 0 18px transparent; }
+}
+.buy-float {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  z-index: 10;
+  animation: buy-float 0.8s ease-out forwards;
+}
+@keyframes buy-float {
+  from { transform: translate(-50%, -20%); opacity: 1; }
+  to { transform: translate(-50%, -150%); opacity: 0; }
+}
