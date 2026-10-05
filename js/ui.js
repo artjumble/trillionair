@@ -108,6 +108,28 @@ export function shakeScreen() {
   app.classList.add('shake');
 }
 
+/**
+ * Purchase feedback: flash the bought card and float a label up off its buy button.
+ * One call per successful click (bulk buys included). The flash only animates
+ * box-shadow, so it never shifts layout; reduced-motion keeps the flash, skips the float.
+ */
+function purchaseFx(card, btn, label) {
+  card.classList.remove('bought');
+  void card.offsetWidth; // force reflow so rapid repeat buys restart the flash
+  card.classList.add('bought');
+  if (reduceMotion()) return;
+  const r = btn.getBoundingClientRect();
+  const node = document.createElement('div');
+  node.className = 'buy-float';
+  node.textContent = label;
+  node.style.left = r.left + r.width / 2 + 'px';
+  node.style.top = r.top + 'px';
+  document.body.appendChild(node);
+  const remove = () => node.remove();
+  node.addEventListener('animationend', remove);
+  setTimeout(remove, 1000);
+}
+
 export function bindUI() {
   const btn = el('click-btn');
   btn.addEventListener('click', (e) => {
@@ -160,7 +182,7 @@ function buildLuxuries() {
     container.appendChild(card);
     const btn = card.querySelector('.luxury__buy');
     btn.addEventListener('click', () => {
-      if (buyLuxury(l.id)) { playBuy(); render(); }
+      if (buyLuxury(l.id)) { playBuy(); purchaseFx(card, btn, '−' + money(l.price)); render(); }
     });
     luxuryEls[l.id] = { btn, owned: card.querySelector('.luxury__owned') };
   }
@@ -280,7 +302,7 @@ function buildMeta() {
     container.appendChild(card);
     const btn = card.querySelector('.meta__buy');
     btn.addEventListener('click', () => {
-      if (buyMeta(u.id)) { playBuy(); render(); }
+      if (buyMeta(u.id)) { playBuy(); purchaseFx(card, btn, `−${u.cost} OM`); render(); }
     });
     metaEls[u.id] = { card, btn };
   }
@@ -404,7 +426,7 @@ function buildUpgrades() {
     container.appendChild(card);
     const btn = card.querySelector('.upgrade__buy');
     btn.addEventListener('click', () => {
-      if (buyUpgrade(u.id)) { playBuy(); render(); }
+      if (buyUpgrade(u.id)) { playBuy(); purchaseFx(card, btn, '−' + money(u.cost)); render(); }
     });
     upgradeEls[u.id] = { card, btn };
   }
@@ -451,7 +473,8 @@ function buildGenerators() {
     container.appendChild(row);
     const btn = row.querySelector('.gen__buy');
     btn.addEventListener('click', () => {
-      if (buyGenerator(g.id, buyMode)) { playBuy(); render(); }
+      const bought = buyGenerator(g.id, buyMode);
+      if (bought) { playBuy(); purchaseFx(row, btn, '+' + bought); render(); }
     });
     genEls[g.id] = {
       owned: row.querySelector('.gen__owned'),
